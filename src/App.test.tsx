@@ -475,4 +475,22 @@ describe('App - Screen Flows & Interactive UI', () => {
     expect(rootStyles.getPropertyValue('--bg-recessed').trim()).not.toBe('#1a2e05');
     expect(rootStyles.getPropertyValue('--bg-hover-dark').trim()).not.toBe('#263815');
   });
+
+  it('defines a < 768px responsive rule setting game-card to 80vh without cropping text', () => {
+    render(<App />);
+    const styleSheets = Array.from(document.styleSheets);
+    const mediaRules: CSSMediaRule[] = [];
+    for (const sheet of styleSheets) {
+      for (const rule of Array.from(sheet.cssRules)) {
+        if (rule instanceof CSSMediaRule && rule.conditionText.includes('767px')) {
+          mediaRules.push(rule);
+        }
+      }
+    }
+    expect(mediaRules.length).toBeGreaterThan(0);
+    const cssText = mediaRules.map((r) => r.cssText).join(' ');
+    expect(cssText).toContain('.game-card');
+    expect(cssText).toMatch(/height:\s*80vh/);
+    expect(cssText).toMatch(/overflow-y:\s*auto/);
+  });
 });
