@@ -1,0 +1,42 @@
+:root {
+  --bg-viewport: #121412;
+  --bg-viewport-alt: #1a1d1a;
+  --bg-card: #1f221f;
+  --bg-panel: #272b27;
+  --bg-recessed: #181a18;
+  --bg-hover-dark: #2f342f;
+  --lime-bright: #a3e635;
+  --lime-muted: #4d7c0f;
+  --font-header: 'Press Start 2P', 'Courier New', monospace;
+  --font-body: 'VT323', 'Courier New', monospace;
+
+  color-scheme: dark;
+  background-color: var(--bg-viewport);
+  color: var(--lime-bright);
+  font-family: var(--font-body);
+  font-synthesis: none;
+  text-rendering: optimizeSpeed;
+  -webkit-font-smoothing: none;
+  -moz-osx-font-smoothing: grayscale;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  border-radius: 0px;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  max-height: 100vh;
+  overflow: hidden;
+  background-color: var(--bg-viewport);
+  color: var(--lime-bright);
+}
