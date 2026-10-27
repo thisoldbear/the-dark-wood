@@ -172,6 +172,8 @@ export const PAUSE_MESSAGES: string[] = [
   'A trickle of icy water cuts across the sunken stone path.',
 ];
 
+export const PAUSE_INTERVAL = 4;
+
 export function rollPauseMessage(rng: Rng = Math.random): string {
   const index = Math.min(
     PAUSE_MESSAGES.length - 1,
@@ -191,6 +193,7 @@ export function createInitialState(): GameState {
     maxHp: 13,
     lamps: 0,
     weapon: { ...STARTING_WEAPON },
+    stepsSincePause: 0,
   };
 }
 
@@ -209,23 +212,27 @@ export function enterDarkWood(state: GameState, rng: Rng = Math.random): GameSta
 }
 
 export function startNextEncounter(state: GameState, rng: Rng = Math.random): GameState {
+  const steps = (state.stepsSincePause ?? 0) + 1;
+  if (steps >= PAUSE_INTERVAL) {
+    return {
+      ...state,
+      screen: 'pause',
+      combat: undefined,
+      chest: undefined,
+      stepsSincePause: 0,
+      pauseMessage: rollPauseMessage(rng),
+    };
+  }
+
   const roll = rollD6(rng);
-  if (roll === 1) {
+  if (roll <= 2) {
     return {
       ...state,
       screen: 'lamp',
       combat: undefined,
       chest: undefined,
       pauseMessage: undefined,
-    };
-  }
-  if (roll === 2) {
-    return {
-      ...state,
-      screen: 'pause',
-      combat: undefined,
-      chest: undefined,
-      pauseMessage: rollPauseMessage(rng),
+      stepsSincePause: steps,
     };
   }
   if (roll <= 5) {
@@ -235,6 +242,7 @@ export function startNextEncounter(state: GameState, rng: Rng = Math.random): Ga
       screen: 'enemy',
       chest: undefined,
       pauseMessage: undefined,
+      stepsSincePause: steps,
       combat: {
         enemy,
         phase: 'encounter',
@@ -248,6 +256,7 @@ export function startNextEncounter(state: GameState, rng: Rng = Math.random): Ga
     screen: 'chest',
     combat: undefined,
     pauseMessage: undefined,
+    stepsSincePause: steps,
     chest: {
       items,
       selectedIndex: 0,

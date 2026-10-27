@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.2.0] - 2026-10-27
 
 ### Added
-- **Pause / Respite Steps**: Added 18 atmospheric flavor vignettes along the trail to provide pacing pauses between combat encounters, lamps, and chests.
+- **Pause / Respite Steps**: Added 18 atmospheric flavor vignettes along the trail, triggering deterministically every 4 encounters to pace the journey between combat, lamps, and chests.
 - **Tree Pixel Art**: New pine tree pixel icon for trail pause screens.
 
 ## [0.1.0] - 2026-10-27

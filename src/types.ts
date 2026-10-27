@@ -78,6 +78,7 @@ export interface GameState {
   combat?: CombatState;
   chest?: ChestState;
   pauseMessage?: string;
+  stepsSincePause?: number;
   restHeal?: number;
   deathCause?: string;
 }

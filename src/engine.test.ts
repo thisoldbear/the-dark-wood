@@ -151,20 +151,17 @@ describe('Engine - State Transitions', () => {
     expect(stateZombie.combat?.phase).toBe('encounter');
   });
 
-  it('startNextEncounter rolls D6: 1 -> lamp, 2 -> pause, 3-5 -> enemy, 6 -> chest', () => {
+  it('startNextEncounter rolls D6: 1-2 -> lamp, 3-5 -> enemy, 6 -> chest when not at pause interval', () => {
     const base = createInitialState();
 
     // Roll 1 -> lamp
     const lampState = startNextEncounter(base, () => dieToFloat(1, 6));
     expect(lampState.screen).toBe('lamp');
+    expect(lampState.stepsSincePause).toBe(1);
 
-    // Roll 2 -> pause (with message from PAUSE_MESSAGES)
-    const pauseRng = createMockRng([dieToFloat(2, 6), 0]);
-    const pauseState = startNextEncounter(base, pauseRng);
-    expect(pauseState.screen).toBe('pause');
-    expect(PAUSE_MESSAGES).toContain(pauseState.pauseMessage);
-    expect(PAUSE_MESSAGES.length).toBeGreaterThanOrEqual(15);
-    expect(PAUSE_MESSAGES.length).toBeLessThanOrEqual(20);
+    // Roll 2 -> lamp
+    const lampState2 = startNextEncounter(base, () => dieToFloat(2, 6));
+    expect(lampState2.screen).toBe('lamp');
 
     // Roll 4 -> enemy, then roll 6 -> spider
     const enemyRng = createMockRng([dieToFloat(4, 6), dieToFloat(6, 6)]);
@@ -182,6 +179,35 @@ describe('Engine - State Transitions', () => {
     expect(chestState.chest?.message).toBe(
       'An ancient ironbound coffer rests among the twisted roots.'
     );
+  });
+
+  it('startNextEncounter deterministically triggers a pause/respite every 4 encounters and resets counter', () => {
+    const base = createInitialState();
+    // 3 steps
+    const step1 = startNextEncounter(base, () => dieToFloat(1, 6));
+    expect(step1.screen).toBe('lamp');
+    expect(step1.stepsSincePause).toBe(1);
+
+    const step2 = startNextEncounter(step1, () => dieToFloat(3, 6));
+    expect(step2.screen).toBe('enemy');
+    expect(step2.stepsSincePause).toBe(2);
+
+    const step3 = startNextEncounter(step2, () => dieToFloat(6, 6));
+    expect(step3.screen).toBe('chest');
+    expect(step3.stepsSincePause).toBe(3);
+
+    // Step 4: reaches PAUSE_INTERVAL -> deterministic respite pause!
+    const step4 = startNextEncounter(step3);
+    expect(step4.screen).toBe('pause');
+    expect(step4.stepsSincePause).toBe(0);
+    expect(PAUSE_MESSAGES).toContain(step4.pauseMessage);
+    expect(PAUSE_MESSAGES.length).toBeGreaterThanOrEqual(15);
+    expect(PAUSE_MESSAGES.length).toBeLessThanOrEqual(20);
+
+    // Next step after pause continues regular encounters
+    const step5 = proceedFromPause(step4, () => dieToFloat(1, 6));
+    expect(step5.screen).toBe('lamp');
+    expect(step5.stepsSincePause).toBe(1);
   });
 
   it('lightLamp increments lamps, heals +D3 HP (capped at maxHp), and goes to rest screen', () => {
@@ -419,7 +445,7 @@ describe('Engine - Chest Mechanics', () => {
     const chestRng = createMockRng([dieToFloat(6, 6), dieToFloat(1, 6)]);
     const state = startNextEncounter(createInitialState(), chestRng);
     const next = leaveChest(state, () => dieToFloat(2, 6));
-    expect(next.screen).toBe('pause');
+    expect(next.screen).toBe('lamp');
   });
 
   it('restartGame resets to initial title state', () => {
