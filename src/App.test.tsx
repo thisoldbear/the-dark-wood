@@ -493,4 +493,36 @@ describe('App - Screen Flows & Interactive UI', () => {
     expect(cssText).toMatch(/height:\s*80vh/);
     expect(cssText).toMatch(/overflow-y:\s*auto/);
   });
+
+  it('renders version link and GitHub repo link outside game wrapper, opening changelog modal on click and closing on CLOSE/Escape', async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    const versionLink = screen.getByRole('link', { name: 'v0.1.0' });
+    expect(versionLink).toBeInTheDocument();
+
+    const githubLink = screen.getByRole('link', { name: 'GitHub' });
+    expect(githubLink).toHaveAttribute(
+      'href',
+      'https://github.com/thisoldbear/the-dark-wood'
+    );
+    expect(githubLink).toHaveAttribute('target', '_blank');
+
+    expect(screen.queryByTestId('changelog-modal')).not.toBeInTheDocument();
+
+    await user.click(versionLink);
+    expect(screen.getByTestId('changelog-modal')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'CHANGELOG' })).toBeInTheDocument();
+    expect(screen.getByText(/v0.1.0 — 2026-10-27/i)).toBeInTheDocument();
+
+    // Close via CLOSE button
+    await user.click(screen.getByRole('button', { name: /CLOSE/i }));
+    expect(screen.queryByTestId('changelog-modal')).not.toBeInTheDocument();
+
+    // Open and close via Escape key
+    await user.click(versionLink);
+    expect(screen.getByTestId('changelog-modal')).toBeInTheDocument();
+    await user.keyboard('{Escape}');
+    expect(screen.queryByTestId('changelog-modal')).not.toBeInTheDocument();
+  });
 });

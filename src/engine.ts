@@ -7,6 +7,8 @@ import type {
   Rng,
 } from './types';
 
+export const APP_VERSION = '0.1.0';
+
 export const STARTING_WEAPON: Weapon = {
   name: 'Rusty Dagger',
   skill: 3,
