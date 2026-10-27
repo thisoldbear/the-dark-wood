@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, it, expect } from 'vitest';
 import App from './App';
-import { createInitialState, createEnemy, enterDarkWood } from './engine';
+import { APP_VERSION, createInitialState, createEnemy, enterDarkWood } from './engine';
 import type { GameState } from './types';
 
 function dieToFloat(face: number, sides: number): number {
@@ -380,11 +380,42 @@ describe('App - Screen Flows & Interactive UI', () => {
     expect(screen.getByText('SACRED LAMP FOUND!')).toBeInTheDocument();
   });
 
+  it('renders pause/respite screen with pine tree icon, flavor vignette, and advances on PROCEED', async () => {
+    const user = userEvent.setup();
+    const pauseState: GameState = {
+      ...createInitialState(),
+      screen: 'pause',
+      pauseMessage: 'A cold breeze whispers through the hollow branches.',
+      lamps: 2,
+    };
+
+    render(<App initialState={pauseState} rng={() => dieToFloat(1, 6)} />);
+
+    expect(screen.getByText('THE TRAIL')).toBeInTheDocument();
+    expect(screen.getByText('A MOMENT OF RESPITE')).toBeInTheDocument();
+    expect(screen.getByText('PROGRESS: 2 / 10 LIT')).toBeInTheDocument();
+    expect(
+      screen.getByText('A cold breeze whispers through the hollow branches.')
+    ).toBeInTheDocument();
+    expect(screen.getByTestId('pixel-icon-tree')).toBeInTheDocument();
+
+    const proceedBtn = screen.getByRole('button', { name: /PROCEED/i });
+    expect(proceedBtn).toBeInTheDocument();
+
+    await user.click(proceedBtn);
+    expect(screen.getByText('SACRED LAMP FOUND!')).toBeInTheDocument();
+  });
+
   it('maintains a fixed, identical game-card height across all screens and combat phases', () => {
     const statesToTest: GameState[] = [
       createInitialState(),
       { ...createInitialState(), screen: 'lamp', lamps: 3 },
       { ...createInitialState(), screen: 'rest', lamps: 4, restHeal: 2 },
+      {
+        ...createInitialState(),
+        screen: 'pause',
+        pauseMessage: 'A cold breeze whispers through the hollow branches.',
+      },
       {
         ...createInitialState(),
         screen: 'enemy',
@@ -492,5 +523,37 @@ describe('App - Screen Flows & Interactive UI', () => {
     expect(cssText).toContain('.game-card');
     expect(cssText).toMatch(/height:\s*80vh/);
     expect(cssText).toMatch(/overflow-y:\s*auto/);
+  });
+
+  it('renders version link and GitHub repo link outside game wrapper, opening changelog modal on click and closing on CLOSE/Escape', async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    const versionLink = screen.getByRole('link', { name: `v${APP_VERSION}` });
+    expect(versionLink).toBeInTheDocument();
+
+    const githubLink = screen.getByRole('link', { name: 'GitHub' });
+    expect(githubLink).toHaveAttribute(
+      'href',
+      'https://github.com/thisoldbear/the-dark-wood'
+    );
+    expect(githubLink).toHaveAttribute('target', '_blank');
+
+    expect(screen.queryByTestId('changelog-modal')).not.toBeInTheDocument();
+
+    await user.click(versionLink);
+    expect(screen.getByTestId('changelog-modal')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'CHANGELOG' })).toBeInTheDocument();
+    expect(screen.getByText(/v0.2.0 — 2026-10-27/i)).toBeInTheDocument();
+
+    // Close via CLOSE button
+    await user.click(screen.getByRole('button', { name: /CLOSE/i }));
+    expect(screen.queryByTestId('changelog-modal')).not.toBeInTheDocument();
+
+    // Open and close via Escape key
+    await user.click(versionLink);
+    expect(screen.getByTestId('changelog-modal')).toBeInTheDocument();
+    await user.keyboard('{Escape}');
+    expect(screen.queryByTestId('changelog-modal')).not.toBeInTheDocument();
   });
 });

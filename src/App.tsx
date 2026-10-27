@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
 import {
+  APP_VERSION,
   createInitialState,
   enterDarkWood,
   lightLamp,
   proceedFromRest,
+  proceedFromPause,
   fightEncounter,
   fleeCombat,
   playerStrike,
@@ -28,6 +30,7 @@ const TITLES: Record<string, string> = {
   enemy: 'COMBAT',
   lamp: 'SACRED LAMP',
   rest: 'SANCTUARY',
+  pause: 'THE TRAIL',
   chest: 'CHEST',
   victory: 'VICTORY',
   game_over: 'GAME OVER',
@@ -37,12 +40,14 @@ export function App({ initialState, rng = Math.random }: AppProps) {
   const [state, setState] = useState<GameState>(
     () => initialState ?? createInitialState()
   );
+  const [showChangelog, setShowChangelog] = useState(false);
 
   const act = (fn: (prev: GameState) => GameState) => setState(fn);
 
   const handleEnter = () => act((prev) => enterDarkWood(prev, rng));
   const handleLightLamp = () => act((prev) => lightLamp(prev, rng));
   const handleProceedFromRest = () => act((prev) => proceedFromRest(prev, rng));
+  const handleProceedFromPause = () => act((prev) => proceedFromPause(prev, rng));
   const handleFight = () => act((prev) => fightEncounter(prev, rng));
   const handleFlee = () => act((prev) => fleeCombat(prev, rng));
   const handleStrike = () => act((prev) => playerStrike(prev, rng));
@@ -57,11 +62,16 @@ export function App({ initialState, rng = Math.random }: AppProps) {
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.target instanceof HTMLButtonElement) return;
+      if (e.key === 'Escape' && showChangelog) {
+        setShowChangelog(false);
+        return;
+      }
       if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
         if (state.screen === 'title') handleEnter();
         else if (state.screen === 'lamp') handleLightLamp();
         else if (state.screen === 'rest') handleProceedFromRest();
+        else if (state.screen === 'pause') handleProceedFromPause();
         else if (state.screen === 'victory' || state.screen === 'game_over')
           handleRestart();
         else if (state.screen === 'chest') handleTakeChest();
@@ -195,6 +205,32 @@ export function App({ initialState, rng = Math.random }: AppProps) {
                 type="button"
                 className="pixel-btn pixel-btn--primary"
                 onClick={handleProceedFromRest}
+              >
+                PROCEED
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* 3b. PAUSE / RESPITE SCREEN */}
+        {state.screen === 'pause' && (
+          <div className="screen-body screen-body--centered">
+            <div className="icon-showcase">
+              <PixelIcon name="tree" size={64} />
+            </div>
+            <h2 className="screen-heading">A MOMENT OF RESPITE</h2>
+            <div className="pixel-banner">
+              PROGRESS: {state.lamps} / 10 LIT
+            </div>
+            <p className="flavor-text">
+              {state.pauseMessage ??
+                'The deep woods stretch endlessly in all directions.'}
+            </p>
+            <div className="action-bar">
+              <button
+                type="button"
+                className="pixel-btn pixel-btn--primary"
+                onClick={handleProceedFromPause}
               >
                 PROCEED
               </button>
@@ -544,6 +580,78 @@ export function App({ initialState, rng = Math.random }: AppProps) {
           </div>
         )}
       </main>
+
+      <footer className="viewport-footer">
+        <a
+          href="#changelog"
+          className="footer-link"
+          onClick={(e) => {
+            e.preventDefault();
+            setShowChangelog(true);
+          }}
+        >
+          v{APP_VERSION}
+        </a>
+        <span className="footer-dot">•</span>
+        <a
+          href="https://github.com/thisoldbear/the-dark-wood"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="footer-link"
+        >
+          GitHub
+        </a>
+      </footer>
+
+      {showChangelog && (
+        <div
+          className="modal-backdrop"
+          onClick={() => setShowChangelog(false)}
+          data-testid="changelog-modal"
+        >
+          <div
+            className="game-card modal-card"
+            onClick={(e) => e.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="changelog-heading"
+            data-testid="changelog-modal-card"
+          >
+            <div className="screen-body screen-body--centered">
+              <h2 id="changelog-heading" className="screen-heading">
+                CHANGELOG
+              </h2>
+              <div className="pixel-panel changelog-panel">
+                <div className="changelog-entry">
+                  <div className="changelog-version">v0.2.0 — 2026-10-27</div>
+                  <ul className="changelog-list">
+                    <li>Pause / Respite trail steps (18 atmospheric vignettes)</li>
+                    <li>Pine tree pixel icon for trail exploration</li>
+                  </ul>
+                </div>
+                <div className="changelog-entry">
+                  <div className="changelog-version">v0.1.0 — 2026-10-27</div>
+                  <ul className="changelog-list">
+                    <li>10 Sacred Lamps quest to banish the dark gloom</li>
+                    <li>Turn-based dice combat with 4 forest beasts</li>
+                    <li>Woodland chest loot &amp; weapon equipment</li>
+                    <li>CRT monochromatic pixel art &amp; keyboard controls</li>
+                  </ul>
+                </div>
+              </div>
+              <div className="action-bar">
+                <button
+                  type="button"
+                  className="pixel-btn pixel-btn--primary"
+                  onClick={() => setShowChangelog(false)}
+                >
+                  CLOSE
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

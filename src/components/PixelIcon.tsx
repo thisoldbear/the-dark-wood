@@ -8,7 +8,8 @@ export type IconName =
   | 'rat'
   | 'zombie'
   | 'wolf'
-  | 'spider';
+  | 'spider'
+  | 'tree';
 
 interface PixelIconProps {
   name: IconName;
@@ -17,6 +18,19 @@ interface PixelIconProps {
 }
 
 const PIXEL_GRIDS: Record<IconName, string[]> = {
+  tree: [
+    '......XXXX......',
+    '.....XXXXXX.....',
+    '....XXXXXXXX....',
+    '.....XXXXXX.....',
+    '....XXXXXXXX....',
+    '..XXXXXXXXXXXX..',
+    '....XXXXXXXX....',
+    '..XXXXXXXXXXXX..',
+    '.XXXXXXXXXXXXXX.',
+    '......XXXX......',
+    '......XXXX......',
+  ],
   lamp: [
     '......XXXX......',
     '.....X....X.....',
