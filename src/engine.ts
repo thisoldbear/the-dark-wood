@@ -7,7 +7,7 @@ import type {
   Rng,
 } from './types';
 
-export const APP_VERSION = '0.2.0';
+export const APP_VERSION = '0.2.1';
 
 export const STARTING_WEAPON: Weapon = {
   name: 'Rusty Dagger',
@@ -522,20 +522,6 @@ export function continueAfterEnemyTurn(state: GameState): GameState {
 
 export function proceedFromCombat(state: GameState, rng: Rng = Math.random): GameState {
   return startNextEncounter(state, rng);
-}
-
-export function cycleChestItem(state: GameState): GameState {
-  const chest = state.chest;
-  if (!chest || chest.items.length === 0) return state;
-
-  const nextIndex = (chest.selectedIndex + 1) % chest.items.length;
-  return {
-    ...state,
-    chest: {
-      ...chest,
-      selectedIndex: nextIndex,
-    },
-  };
 }
 
 export function takeChestItem(

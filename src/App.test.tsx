@@ -380,6 +380,23 @@ describe('App - Screen Flows & Interactive UI', () => {
     expect(screen.getByText('SACRED LAMP FOUND!')).toBeInTheDocument();
   });
 
+  it('allows F hotkey to flee combat even when a button has focus', async () => {
+    const user = userEvent.setup();
+    const initial = {
+      ...enterDarkWood(createInitialState(), () => 0.1),
+      hp: 10,
+      lamps: 2,
+    };
+    render(<App initialState={initial} rng={() => dieToFloat(1, 6)} />);
+
+    const fightButton = screen.getByRole('button', { name: /FIGHT/i });
+    fightButton.focus();
+    expect(fightButton).toHaveFocus();
+
+    await user.keyboard('f');
+    expect(screen.getByText('FLED COMBAT')).toBeInTheDocument();
+  });
+
   it('renders pause/respite screen with pine tree icon, flavor vignette, and advances on PROCEED', async () => {
     const user = userEvent.setup();
     const pauseState: GameState = {

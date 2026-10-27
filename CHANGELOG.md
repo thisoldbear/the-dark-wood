@@ -5,6 +5,15 @@ All notable changes to **The Dark Wood** will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.1] - 2026-10-27
+
+### Fixed
+- Flee keyboard shortcut (`F` / `f`) now functions properly when interface buttons have focus.
+- Prevent redundant keydown listener re-registration on every render.
+
+### Removed
+- Dead `cycleChestItem` helper from game engine.
+
 ## [0.2.0] - 2026-10-27
 
 ### Added

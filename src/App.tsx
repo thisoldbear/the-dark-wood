@@ -61,7 +61,12 @@ export function App({ initialState, rng = Math.random }: AppProps) {
   // Optional keyboard shortcuts (Enter/Space for primary action, Escape/F for secondary)
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
-      if (e.target instanceof HTMLButtonElement) return;
+      if (
+        e.target instanceof HTMLButtonElement &&
+        (e.key === 'Enter' || e.key === ' ')
+      ) {
+        return;
+      }
       if (e.key === 'Escape' && showChangelog) {
         setShowChangelog(false);
         return;
@@ -96,7 +101,8 @@ export function App({ initialState, rng = Math.random }: AppProps) {
     };
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
-  });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state, showChangelog, rng]);
 
   const isDoubleBorderScreen =
     state.screen === 'title' ||
@@ -622,6 +628,13 @@ export function App({ initialState, rng = Math.random }: AppProps) {
                 CHANGELOG
               </h2>
               <div className="pixel-panel changelog-panel">
+                <div className="changelog-entry">
+                  <div className="changelog-version">v0.2.1 — 2026-10-27</div>
+                  <ul className="changelog-list">
+                    <li>Fix flee keyboard shortcut (`F` / `f`) when buttons are focused</li>
+                    <li>Remove redundant event listener re-registration</li>
+                  </ul>
+                </div>
                 <div className="changelog-entry">
                   <div className="changelog-version">v0.2.0 — 2026-10-27</div>
                   <ul className="changelog-list">

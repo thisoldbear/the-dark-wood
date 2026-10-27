@@ -18,7 +18,6 @@ import {
   continueAfterPlayerStrike,
   continueAfterEnemyTurn,
   proceedFromCombat,
-  cycleChestItem,
   takeChestItem,
   leaveChest,
   restartGame,
@@ -411,16 +410,6 @@ describe('Engine - Combat Mechanics', () => {
 });
 
 describe('Engine - Chest Mechanics', () => {
-  it('cycleChestItem keeps selection on the single chest item', () => {
-    const chestRng = createMockRng([dieToFloat(6, 6), dieToFloat(4, 6)]);
-    const state = startNextEncounter(createInitialState(), chestRng);
-    expect(state.chest?.items).toHaveLength(1);
-    expect(state.chest?.selectedIndex).toBe(0);
-
-    const cycled1 = cycleChestItem(state);
-    expect(cycled1.chest?.selectedIndex).toBe(0);
-  });
-
   it('takeChestItem applies potion healing or weapon equip and immediately exits the 1-item chest', () => {
     // 1st chest: Elixir of Life (+3 HP)
     const potionChestRng = createMockRng([dieToFloat(6, 6), dieToFloat(1, 6)]);
