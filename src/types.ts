@@ -74,10 +74,8 @@ export interface GameState {
   maxHp: number;
   lamps: number;
   weapon: Weapon;
-  potions: number;
   combat?: CombatState;
   chest?: ChestState;
-  lampMessage?: string;
   restHeal?: number;
   deathCause?: string;
 }

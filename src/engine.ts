@@ -160,7 +160,6 @@ export function createInitialState(): GameState {
     maxHp: 13,
     lamps: 0,
     weapon: { ...STARTING_WEAPON },
-    potions: 0,
   };
 }
 
@@ -186,7 +185,6 @@ export function startNextEncounter(state: GameState, rng: Rng = Math.random): Ga
       screen: 'lamp',
       combat: undefined,
       chest: undefined,
-      lampMessage: 'Light this lamp to dispel the suffocating black gloom.',
     };
   }
   if (roll <= 5) {
