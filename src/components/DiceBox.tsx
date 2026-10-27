@@ -3,44 +3,19 @@ interface DiceBoxProps {
   hit: boolean;
 }
 
-// 3x3 pip positions for D6 faces 1..6
-const PIP_POSITIONS: Record<number, Array<[number, number]>> = {
-  1: [[1, 1]],
-  2: [
-    [0, 0],
-    [2, 2],
-  ],
-  3: [
-    [0, 0],
-    [1, 1],
-    [2, 2],
-  ],
-  4: [
-    [0, 0],
-    [2, 0],
-    [0, 2],
-    [2, 2],
-  ],
-  5: [
-    [0, 0],
-    [2, 0],
-    [1, 1],
-    [0, 2],
-    [2, 2],
-  ],
-  6: [
-    [0, 0],
-    [2, 0],
-    [0, 1],
-    [2, 1],
-    [0, 2],
-    [2, 2],
-  ],
+// 3x3 pip grid indices (0..8) for D6 faces 1..6
+const PIPS: Record<number, number[]> = {
+  1: [4],
+  2: [0, 8],
+  3: [0, 4, 8],
+  4: [0, 2, 6, 8],
+  5: [0, 2, 4, 6, 8],
+  6: [0, 2, 3, 5, 6, 8],
 };
 
 export function DiceBox({ roll, hit }: DiceBoxProps) {
   const clampedRoll = Math.max(1, Math.min(6, roll));
-  const pips = PIP_POSITIONS[clampedRoll] || PIP_POSITIONS[1];
+  const pips = PIPS[clampedRoll] || PIPS[1];
 
   return (
     <div className="dice-box-container" data-testid="dice-box">
@@ -51,18 +26,13 @@ export function DiceBox({ roll, hit }: DiceBoxProps) {
         aria-label={`Rolled ${clampedRoll}`}
       >
         <div className="dice-grid">
-          {[0, 1, 2].map((row) =>
-            [0, 1, 2].map((col) => {
-              const hasPip = pips.some(([c, r]) => c === col && r === row);
-              return (
-                <div key={`${row}-${col}`} className="dice-cell">
-                  {hasPip && (
-                    <span className="dice-pip" data-testid="dice-pip" />
-                  )}
-                </div>
-              );
-            })
-          )}
+          {Array.from({ length: 9 }, (_, i) => (
+            <div key={i} className="dice-cell">
+              {pips.includes(i) && (
+                <span className="dice-pip" data-testid="dice-pip" />
+              )}
+            </div>
+          ))}
         </div>
       </div>
       <div

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import {
   createInitialState,
   enterDarkWood,
@@ -24,115 +24,34 @@ interface AppProps {
   rng?: Rng;
 }
 
-function playRetroBeep(freq = 440, duration = 0.04) {
-  try {
-    const AudioCtx =
-      window.AudioContext ||
-      (window as unknown as { webkitAudioContext?: typeof AudioContext })
-        .webkitAudioContext;
-    if (!AudioCtx) return;
-    const ctx = new AudioCtx();
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.type = 'square';
-    osc.frequency.setValueAtTime(freq, ctx.currentTime);
-    gain.gain.setValueAtTime(0.03, ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    osc.start();
-    osc.stop(ctx.currentTime + duration);
-  } catch {
-    // Ignore audio context errors in headless/test environments
-  }
-}
-
-function getHeaderTitle(screen: GameState['screen']): string {
-  switch (screen) {
-    case 'enemy':
-      return 'COMBAT';
-    case 'lamp':
-      return 'SACRED LAMP';
-    case 'rest':
-      return 'SANCTUARY';
-    case 'chest':
-      return 'CHEST';
-    case 'victory':
-      return 'VICTORY';
-    case 'game_over':
-      return 'GAME OVER';
-    default:
-      return 'THE DARK WOOD';
-  }
-}
+const TITLES: Record<string, string> = {
+  enemy: 'COMBAT',
+  lamp: 'SACRED LAMP',
+  rest: 'SANCTUARY',
+  chest: 'CHEST',
+  victory: 'VICTORY',
+  game_over: 'GAME OVER',
+};
 
 export function App({ initialState, rng = Math.random }: AppProps) {
   const [state, setState] = useState<GameState>(
     () => initialState ?? createInitialState()
   );
 
-  const handleEnter = useCallback(() => {
-    playRetroBeep(520, 0.06);
-    setState((prev) => enterDarkWood(prev, rng));
-  }, [rng]);
+  const act = (fn: (prev: GameState) => GameState) => setState(fn);
 
-  const handleLightLamp = useCallback(() => {
-    playRetroBeep(660, 0.08);
-    setState((prev) => lightLamp(prev, rng));
-  }, [rng]);
-
-  const handleProceedFromRest = useCallback(() => {
-    playRetroBeep(480, 0.05);
-    setState((prev) => proceedFromRest(prev, rng));
-  }, [rng]);
-
-  const handleFight = useCallback(() => {
-    playRetroBeep(540, 0.06);
-    setState((prev) => fightEncounter(prev, rng));
-  }, [rng]);
-
-  const handleFlee = useCallback(() => {
-    playRetroBeep(260, 0.08);
-    setState((prev) => fleeCombat(prev, rng));
-  }, [rng]);
-
-  const handleStrike = useCallback(() => {
-    playRetroBeep(600, 0.06);
-    setState((prev) => playerStrike(prev, rng));
-  }, [rng]);
-
-  const handleContinueStrike = useCallback(() => {
-    playRetroBeep(400, 0.05);
-    setState((prev) => continueAfterPlayerStrike(prev, rng));
-  }, [rng]);
-
-  const handleContinueEnemy = useCallback(() => {
-    playRetroBeep(460, 0.05);
-    setState((prev) => continueAfterEnemyTurn(prev));
-  }, []);
-
-  const handleProceedCombat = useCallback(() => {
-    playRetroBeep(520, 0.05);
-    setState((prev) => proceedFromCombat(prev, rng));
-  }, [rng]);
-
-  const handleTakeChest = useCallback(
-    (index?: number) => {
-      playRetroBeep(680, 0.07);
-      setState((prev) => takeChestItem(prev, index, rng));
-    },
-    [rng]
-  );
-
-  const handleLeaveChest = useCallback(() => {
-    playRetroBeep(320, 0.05);
-    setState((prev) => leaveChest(prev, rng));
-  }, [rng]);
-
-  const handleRestart = useCallback(() => {
-    playRetroBeep(500, 0.06);
-    setState(restartGame());
-  }, []);
+  const handleEnter = () => act((prev) => enterDarkWood(prev, rng));
+  const handleLightLamp = () => act((prev) => lightLamp(prev, rng));
+  const handleProceedFromRest = () => act((prev) => proceedFromRest(prev, rng));
+  const handleFight = () => act((prev) => fightEncounter(prev, rng));
+  const handleFlee = () => act((prev) => fleeCombat(prev, rng));
+  const handleStrike = () => act((prev) => playerStrike(prev, rng));
+  const handleContinueStrike = () => act((prev) => continueAfterPlayerStrike(prev, rng));
+  const handleContinueEnemy = () => act(continueAfterEnemyTurn);
+  const handleProceedCombat = () => act((prev) => proceedFromCombat(prev, rng));
+  const handleTakeChest = (index?: number) => act((prev) => takeChestItem(prev, index, rng));
+  const handleLeaveChest = () => act((prev) => leaveChest(prev, rng));
+  const handleRestart = () => act(restartGame);
 
   // Optional keyboard shortcuts (Enter/Space for primary action, Escape/F for secondary)
   useEffect(() => {
@@ -167,20 +86,7 @@ export function App({ initialState, rng = Math.random }: AppProps) {
     };
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
-  }, [
-    state,
-    handleEnter,
-    handleLightLamp,
-    handleProceedFromRest,
-    handleRestart,
-    handleTakeChest,
-    handleFight,
-    handleStrike,
-    handleContinueStrike,
-    handleContinueEnemy,
-    handleProceedCombat,
-    handleFlee,
-  ]);
+  });
 
   const isDoubleBorderScreen =
     state.screen === 'title' ||
@@ -199,7 +105,7 @@ export function App({ initialState, rng = Math.random }: AppProps) {
           <header className="status-header" data-testid="status-header">
             <div className="status-header__left">
               <span className="status-header__title">
-                {getHeaderTitle(state.screen)}
+                {TITLES[state.screen] ?? 'THE DARK WOOD'}
               </span>
             </div>
             <div className="status-header__right">
