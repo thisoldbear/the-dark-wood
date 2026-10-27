@@ -11,6 +11,7 @@ import {
   startNextEncounter,
   lightLamp,
   proceedFromRest,
+  proceedFromPause,
   fightEncounter,
   fleeCombat,
   playerStrike,
@@ -24,6 +25,7 @@ import {
   STARTING_WEAPON,
   BESTIARY,
   LOOT_TABLE,
+  PAUSE_MESSAGES,
 } from './engine';
 
 // Helper to create a deterministic sequence of rolls from [0, 1) values or D6/D3 targets
@@ -149,16 +151,20 @@ describe('Engine - State Transitions', () => {
     expect(stateZombie.combat?.phase).toBe('encounter');
   });
 
-  it('startNextEncounter rolls D6: 1-2 -> lamp, 3-5 -> enemy, 6 -> chest', () => {
+  it('startNextEncounter rolls D6: 1 -> lamp, 2 -> pause, 3-5 -> enemy, 6 -> chest', () => {
     const base = createInitialState();
 
     // Roll 1 -> lamp
     const lampState = startNextEncounter(base, () => dieToFloat(1, 6));
     expect(lampState.screen).toBe('lamp');
 
-    // Roll 2 -> lamp
-    const lampState2 = startNextEncounter(base, () => dieToFloat(2, 6));
-    expect(lampState2.screen).toBe('lamp');
+    // Roll 2 -> pause (with message from PAUSE_MESSAGES)
+    const pauseRng = createMockRng([dieToFloat(2, 6), 0]);
+    const pauseState = startNextEncounter(base, pauseRng);
+    expect(pauseState.screen).toBe('pause');
+    expect(PAUSE_MESSAGES).toContain(pauseState.pauseMessage);
+    expect(PAUSE_MESSAGES.length).toBeGreaterThanOrEqual(15);
+    expect(PAUSE_MESSAGES.length).toBeLessThanOrEqual(20);
 
     // Roll 4 -> enemy, then roll 6 -> spider
     const enemyRng = createMockRng([dieToFloat(4, 6), dieToFloat(6, 6)]);
@@ -222,6 +228,15 @@ describe('Engine - State Transitions', () => {
       screen: 'rest' as const,
     };
     const next = proceedFromRest(state, () => dieToFloat(1, 6));
+    expect(next.screen).toBe('lamp');
+  });
+
+  it('proceedFromPause calls startNextEncounter', () => {
+    const state = {
+      ...createInitialState(),
+      screen: 'pause' as const,
+    };
+    const next = proceedFromPause(state, () => dieToFloat(1, 6));
     expect(next.screen).toBe('lamp');
   });
 });
@@ -404,7 +419,7 @@ describe('Engine - Chest Mechanics', () => {
     const chestRng = createMockRng([dieToFloat(6, 6), dieToFloat(1, 6)]);
     const state = startNextEncounter(createInitialState(), chestRng);
     const next = leaveChest(state, () => dieToFloat(2, 6));
-    expect(next.screen).toBe('lamp');
+    expect(next.screen).toBe('pause');
   });
 
   it('restartGame resets to initial title state', () => {

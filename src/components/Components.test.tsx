@@ -16,6 +16,7 @@ describe('PixelIcon Component', () => {
     'zombie',
     'wolf',
     'spider',
+    'tree',
   ];
 
   it.each(icons)('renders crisp pixel SVG for %s icon', (iconName) => {

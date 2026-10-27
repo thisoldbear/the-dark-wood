@@ -5,6 +5,12 @@ All notable changes to **The Dark Wood** will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.0] - 2026-10-27
+
+### Added
+- **Pause / Respite Steps**: Added 18 atmospheric flavor vignettes along the trail to provide pacing pauses between combat encounters, lamps, and chests.
+- **Tree Pixel Art**: New pine tree pixel icon for trail pause screens.
+
 ## [0.1.0] - 2026-10-27
 
 ### Added

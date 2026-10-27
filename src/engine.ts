@@ -7,7 +7,7 @@ import type {
   Rng,
 } from './types';
 
-export const APP_VERSION = '0.1.0';
+export const APP_VERSION = '0.2.0';
 
 export const STARTING_WEAPON: Weapon = {
   name: 'Rusty Dagger',
@@ -151,6 +151,35 @@ export function rollLootItem(rng: Rng = Math.random): Item {
   };
 }
 
+export const PAUSE_MESSAGES: string[] = [
+  'A cold breeze whispers through the hollow branches.',
+  'You pause to catch your breath beneath a towering black pine.',
+  'Distantly, a lone raven calls into the gathering mist.',
+  'The canopy thickens above, blotting out the pale sky.',
+  'Soft rustling in the dead leaves puts you on guard, but nothing emerges.',
+  'A heavy, watchful silence settles over the damp forest path.',
+  'Faint green luminescence pulses from a cluster of rotting fungi.',
+  'The trail narrows between two ancient, moss-choked boulders.',
+  'You tighten your grip on your weapon and press forward into the shadows.',
+  'A sudden snap of a dry twig rings out in the stillness.',
+  'An ancient stone boundary marker lies half-buried in decaying brambles.',
+  'A spectral fog drifts lazily across the twisted roots.',
+  'The faint scent of old woodsmoke and damp earth lingers on the air.',
+  'You wipe cold sweat from your brow; the gloom seems almost alive.',
+  'A solitary pale moth flutters through the dark before vanishing.',
+  'Black thorns claw at your cloak as you follow the winding trail.',
+  'The air turns bitter and sharp; winter seems trapped in this grove.',
+  'A trickle of icy water cuts across the sunken stone path.',
+];
+
+export function rollPauseMessage(rng: Rng = Math.random): string {
+  const index = Math.min(
+    PAUSE_MESSAGES.length - 1,
+    Math.floor(rng() * PAUSE_MESSAGES.length)
+  );
+  return PAUSE_MESSAGES[index];
+}
+
 export function rollChestItems(rng: Rng = Math.random): Item[] {
   return [rollLootItem(rng)];
 }
@@ -181,12 +210,22 @@ export function enterDarkWood(state: GameState, rng: Rng = Math.random): GameSta
 
 export function startNextEncounter(state: GameState, rng: Rng = Math.random): GameState {
   const roll = rollD6(rng);
-  if (roll <= 2) {
+  if (roll === 1) {
     return {
       ...state,
       screen: 'lamp',
       combat: undefined,
       chest: undefined,
+      pauseMessage: undefined,
+    };
+  }
+  if (roll === 2) {
+    return {
+      ...state,
+      screen: 'pause',
+      combat: undefined,
+      chest: undefined,
+      pauseMessage: rollPauseMessage(rng),
     };
   }
   if (roll <= 5) {
@@ -195,6 +234,7 @@ export function startNextEncounter(state: GameState, rng: Rng = Math.random): Ga
       ...state,
       screen: 'enemy',
       chest: undefined,
+      pauseMessage: undefined,
       combat: {
         enemy,
         phase: 'encounter',
@@ -207,6 +247,7 @@ export function startNextEncounter(state: GameState, rng: Rng = Math.random): Ga
     ...state,
     screen: 'chest',
     combat: undefined,
+    pauseMessage: undefined,
     chest: {
       items,
       selectedIndex: 0,
@@ -236,6 +277,10 @@ export function lightLamp(state: GameState, rng: Rng = Math.random): GameState {
 }
 
 export function proceedFromRest(state: GameState, rng: Rng = Math.random): GameState {
+  return startNextEncounter(state, rng);
+}
+
+export function proceedFromPause(state: GameState, rng: Rng = Math.random): GameState {
   return startNextEncounter(state, rng);
 }
 
