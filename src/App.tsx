@@ -33,51 +33,25 @@ const TITLES: Record<string, string> = {
   game_over: 'GAME OVER',
 };
 
-function playRetroBeep(freq = 440, duration = 0.04) {
-  try {
-    const AudioCtx =
-      window.AudioContext ||
-      (window as unknown as { webkitAudioContext?: typeof AudioContext })
-        .webkitAudioContext;
-    if (!AudioCtx) return;
-    const ctx = new AudioCtx();
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.type = 'square';
-    osc.frequency.setValueAtTime(freq, ctx.currentTime);
-    gain.gain.setValueAtTime(0.03, ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    osc.start();
-    osc.stop(ctx.currentTime + duration);
-  } catch {
-    // Ignore audio context errors in headless/test environments
-  }
-}
-
 export function App({ initialState, rng = Math.random }: AppProps) {
   const [state, setState] = useState<GameState>(
     () => initialState ?? createInitialState()
   );
 
-  const act = (fn: (prev: GameState) => GameState, freq = 500, dur = 0.06) => {
-    playRetroBeep(freq, dur);
-    setState(fn);
-  };
+  const act = (fn: (prev: GameState) => GameState) => setState(fn);
 
-  const handleEnter = () => act((prev) => enterDarkWood(prev, rng), 520);
-  const handleLightLamp = () => act((prev) => lightLamp(prev, rng), 660, 0.08);
-  const handleProceedFromRest = () => act((prev) => proceedFromRest(prev, rng), 480, 0.05);
-  const handleFight = () => act((prev) => fightEncounter(prev, rng), 540);
-  const handleFlee = () => act((prev) => fleeCombat(prev, rng), 260, 0.08);
-  const handleStrike = () => act((prev) => playerStrike(prev, rng), 600);
-  const handleContinueStrike = () => act((prev) => continueAfterPlayerStrike(prev, rng), 400, 0.05);
-  const handleContinueEnemy = () => act(continueAfterEnemyTurn, 460, 0.05);
-  const handleProceedCombat = () => act((prev) => proceedFromCombat(prev, rng), 520, 0.05);
-  const handleTakeChest = (index?: number) => act((prev) => takeChestItem(prev, index, rng), 680, 0.07);
-  const handleLeaveChest = () => act((prev) => leaveChest(prev, rng), 320, 0.05);
-  const handleRestart = () => act(restartGame, 500);
+  const handleEnter = () => act((prev) => enterDarkWood(prev, rng));
+  const handleLightLamp = () => act((prev) => lightLamp(prev, rng));
+  const handleProceedFromRest = () => act((prev) => proceedFromRest(prev, rng));
+  const handleFight = () => act((prev) => fightEncounter(prev, rng));
+  const handleFlee = () => act((prev) => fleeCombat(prev, rng));
+  const handleStrike = () => act((prev) => playerStrike(prev, rng));
+  const handleContinueStrike = () => act((prev) => continueAfterPlayerStrike(prev, rng));
+  const handleContinueEnemy = () => act(continueAfterEnemyTurn);
+  const handleProceedCombat = () => act((prev) => proceedFromCombat(prev, rng));
+  const handleTakeChest = (index?: number) => act((prev) => takeChestItem(prev, index, rng));
+  const handleLeaveChest = () => act((prev) => leaveChest(prev, rng));
+  const handleRestart = () => act(restartGame);
 
   // Optional keyboard shortcuts (Enter/Space for primary action, Escape/F for secondary)
   useEffect(() => {
