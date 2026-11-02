@@ -199,7 +199,9 @@ describe('App - Screen Flows & Interactive UI', () => {
     // Sanctuary / Rest screen
     expect(screen.getByText('SANCTUARY')).toBeInTheDocument();
     expect(screen.getByText('YOU REST BY THE LIGHT')).toBeInTheDocument();
-    expect(screen.getByText('LAMP 3 OF 10 IGNITED!')).toBeInTheDocument();
+    expect(
+      screen.queryByText(/LAMP \d+ OF 10 IGNITED!/i)
+    ).not.toBeInTheDocument();
     expect(screen.getByText(/Recovered \+3 HP! \(HP: 11\/13\)/i)).toBeInTheDocument();
     expect(
       screen.getByText(

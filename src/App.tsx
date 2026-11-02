@@ -194,9 +194,6 @@ export function App({ initialState, rng = Math.random }: AppProps) {
               <PixelIcon name="lamp" size={64} />
             </div>
             <h2 className="screen-heading">YOU REST BY THE LIGHT</h2>
-            <div className="pixel-banner">
-              LAMP {state.lamps} OF 10 IGNITED!
-            </div>
             <p className="heal-log">
               Recovered +{state.restHeal ?? 0} HP! (HP: {state.hp}/{state.maxHp})
             </p>
@@ -622,6 +619,12 @@ export function App({ initialState, rng = Math.random }: AppProps) {
                 CHANGELOG
               </h2>
               <div className="pixel-panel changelog-panel">
+                <div className="changelog-entry">
+                  <div className="changelog-version">v0.2.5 — 2026-11-02</div>
+                  <ul className="changelog-list">
+                    <li>Removed ignited lamp banner from Sanctuary screen</li>
+                  </ul>
+                </div>
                 <div className="changelog-entry">
                   <div className="changelog-version">v0.2.4 — 2026-11-02</div>
                   <ul className="changelog-list">
