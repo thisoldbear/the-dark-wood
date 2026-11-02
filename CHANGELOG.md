@@ -5,6 +5,11 @@ All notable changes to **The Dark Wood** will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.0] - 2026-11-02
+
+### Changed
+- Standardized UI layout across encounter steps: Sacred Lamp, Sanctuary (Rest), Moment of Respite (Trail Pause), Woodland Chest, and Fallen (Game Over) screens now follow the structured combat layout, reusing the top summary card (`.enemy-card`) for icon and titles and the interactive content box (`.combat-box`) for descriptions, loot, and actions.
+
 ## [0.2.6] - 2026-11-02
 
 ### Changed

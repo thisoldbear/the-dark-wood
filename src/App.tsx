@@ -157,71 +157,116 @@ export function App({ initialState, rng = Math.random }: AppProps) {
 
         {/* 2. SACRED LAMP SCREEN */}
         {state.screen === 'lamp' && (
-          <div className="screen-body screen-body--centered">
-            <div className="icon-showcase">
-              <PixelIcon name="lamp" size={64} />
-            </div>
-            <h2 className="screen-heading">YOU FIND AN UNLIT LAMP</h2>
-            <p className="flavor-text">
-              Light this lamp to dispel the suffocating black gloom.
-            </p>
-            <div className="action-bar">
-              <button
-                type="button"
-                className="pixel-btn pixel-btn--primary"
-                onClick={handleLightLamp}
-              >
-                LIGHT THE LAMP
-              </button>
-            </div>
+          <div className="screen-body">
+            <section className="enemy-card">
+              <div className="enemy-card__icon">
+                <PixelIcon name="lamp" size={56} />
+              </div>
+              <div className="enemy-card__info">
+                <div className="enemy-card__name-row">
+                  <h2 className="enemy-card__name">YOU FIND AN UNLIT LAMP</h2>
+                </div>
+                <div className="enemy-card__stats">
+                  <span className="enemy-stat-badge">UNLIT</span>
+                  <span className="enemy-stat-badge">HOLY FLAME</span>
+                </div>
+              </div>
+            </section>
+
+            <section className="combat-box">
+              <div className="combat-box__content">
+                <p className="flavor-text">
+                  Light this lamp to dispel the suffocating black gloom.
+                </p>
+              </div>
+              <div className="action-bar">
+                <button
+                  type="button"
+                  className="pixel-btn pixel-btn--primary"
+                  onClick={handleLightLamp}
+                >
+                  LIGHT THE LAMP
+                </button>
+              </div>
+            </section>
           </div>
         )}
 
         {/* 3. REST / SANCTUARY SCREEN */}
         {state.screen === 'rest' && (
-          <div className="screen-body screen-body--centered">
-            <div className="icon-showcase">
-              <PixelIcon name="lamp" size={64} />
-            </div>
-            <h2 className="screen-heading">YOU REST BY THE LIGHT</h2>
-            <p className="heal-log">
-              Recovered +{state.restHeal ?? 0} HP! (HP: {state.hp}/{state.maxHp})
-            </p>
-            <p className="flavor-text">
-              The holy flame keeps beasts at bay. Warmth returns to your limbs.
-            </p>
-            <div className="action-bar">
-              <button
-                type="button"
-                className="pixel-btn pixel-btn--primary"
-                onClick={handleProceedFromRest}
-              >
-                PROCEED
-              </button>
-            </div>
+          <div className="screen-body">
+            <section className="enemy-card">
+              <div className="enemy-card__icon">
+                <PixelIcon name="lamp" size={56} />
+              </div>
+              <div className="enemy-card__info">
+                <div className="enemy-card__name-row">
+                  <h2 className="enemy-card__name">YOU REST BY THE LIGHT</h2>
+                </div>
+                <div className="enemy-card__stats">
+                  <span className="enemy-stat-badge">REST SITE</span>
+                  <span className="enemy-stat-badge">HEALS WOUNDS</span>
+                </div>
+              </div>
+            </section>
+
+            <section className="combat-box">
+              <div className="combat-box__content">
+                <p className="heal-log">
+                  Recovered +{state.restHeal ?? 0} HP! (HP: {state.hp}/{state.maxHp})
+                </p>
+                <p className="flavor-text">
+                  The holy flame keeps beasts at bay. Warmth returns to your limbs.
+                </p>
+              </div>
+              <div className="action-bar">
+                <button
+                  type="button"
+                  className="pixel-btn pixel-btn--primary"
+                  onClick={handleProceedFromRest}
+                >
+                  PROCEED
+                </button>
+              </div>
+            </section>
           </div>
         )}
 
         {/* 3b. PAUSE / RESPITE SCREEN */}
         {state.screen === 'pause' && (
-          <div className="screen-body screen-body--centered">
-            <div className="icon-showcase">
-              <PixelIcon name="tree" size={64} />
-            </div>
-            <h2 className="screen-heading">A MOMENT OF RESPITE</h2>
-            <p className="flavor-text">
-              {state.pauseMessage ??
-                'The deep woods stretch endlessly in all directions.'}
-            </p>
-            <div className="action-bar">
-              <button
-                type="button"
-                className="pixel-btn pixel-btn--primary"
-                onClick={handleProceedFromPause}
-              >
-                PROCEED
-              </button>
-            </div>
+          <div className="screen-body">
+            <section className="enemy-card">
+              <div className="enemy-card__icon">
+                <PixelIcon name="tree" size={56} />
+              </div>
+              <div className="enemy-card__info">
+                <div className="enemy-card__name-row">
+                  <h2 className="enemy-card__name">A MOMENT OF RESPITE</h2>
+                </div>
+                <div className="enemy-card__stats">
+                  <span className="enemy-stat-badge">SAFE HAVEN</span>
+                  <span className="enemy-stat-badge">TRAIL REST</span>
+                </div>
+              </div>
+            </section>
+
+            <section className="combat-box">
+              <div className="combat-box__content">
+                <p className="flavor-text">
+                  {state.pauseMessage ??
+                    'The deep woods stretch endlessly in all directions.'}
+                </p>
+              </div>
+              <div className="action-bar">
+                <button
+                  type="button"
+                  className="pixel-btn pixel-btn--primary"
+                  onClick={handleProceedFromPause}
+                >
+                  PROCEED
+                </button>
+              </div>
+            </section>
           </div>
         )}
 
@@ -435,85 +480,94 @@ export function App({ initialState, rng = Math.random }: AppProps) {
         {/* 5. WOODLAND CHEST SCREEN */}
         {state.screen === 'chest' && state.chest && (
           <div className="screen-body">
-            <div className="chest-header-row">
-              <PixelIcon name="chest" size={52} />
-              <div>
-                <h2 className="screen-heading">WOODLAND CHEST</h2>
-                <p className="chest-status">{state.chest.message}</p>
+            <section className="enemy-card">
+              <div className="enemy-card__icon">
+                <PixelIcon name="chest" size={56} />
               </div>
-            </div>
+              <div className="enemy-card__info">
+                <div className="enemy-card__name-row">
+                  <h2 className="enemy-card__name">WOODLAND CHEST</h2>
+                </div>
+                <div className="enemy-card__stats">
+                  <span className="enemy-stat-badge">TREASURE</span>
+                </div>
+              </div>
+            </section>
 
-            <div className="chest-items-list">
-              {state.chest.items.map((item, idx) => {
-                const isSelected = idx === state.chest?.selectedIndex;
-                return (
-                  <div key={`${item.name}-${idx}`} className="chest-loot-wrapper">
-                    <button
-                      type="button"
-                      data-testid={`chest-item-${idx}`}
-                      className={`chest-item-card ${
-                        isSelected ? 'chest-item-card--selected' : ''
-                      }`}
-                      onClick={() => handleTakeChest(idx)}
-                    >
-                      <div className="chest-item-card__icon">
-                        <PixelIcon
-                          name={item.type === 'weapon' ? 'sword' : 'potion'}
-                          size={36}
-                        />
-                      </div>
-                      <div className="chest-item-card__body">
-                        <div className="chest-item-card__name">{item.name}</div>
-                        <div className="chest-item-card__stats">
-                          {item.type === 'weapon' && item.weapon
-                            ? `Weapon | Skill ${item.weapon.skill}+ | Damage ${item.weapon.damage}`
-                            : `Potion | Heal +${item.heal} HP`}
-                        </div>
-                        <div className="chest-item-card__desc">"{item.desc}"</div>
-                      </div>
-                      <div className="chest-item-card__cta">TAKE</div>
-                    </button>
-
-                    {item.type === 'weapon' && (
-                      <div
-                        className="current-weapon-replace-box"
-                        data-testid="current-weapon-replace-info"
+            <section className="combat-box">
+              <div className="chest-items-list">
+                <p className="flavor-text">{state.chest.message}</p>
+                {state.chest.items.map((item, idx) => {
+                  const isSelected = idx === state.chest?.selectedIndex;
+                  return (
+                    <div key={`${item.name}-${idx}`} className="chest-loot-wrapper">
+                      <button
+                        type="button"
+                        data-testid={`chest-item-${idx}`}
+                        className={`chest-item-card ${
+                          isSelected ? 'chest-item-card--selected' : ''
+                        }`}
+                        onClick={() => handleTakeChest(idx)}
                       >
-                        <div className="current-weapon-replace-label">
-                          Current Weapon:
+                        <div className="chest-item-card__icon">
+                          <PixelIcon
+                            name={item.type === 'weapon' ? 'sword' : 'potion'}
+                            size={36}
+                          />
                         </div>
-                        <div className="current-weapon-replace-details">
-                          <span className="current-weapon-replace-name">
-                            {state.weapon.name}
-                          </span>
-                          <span className="current-weapon-replace-stats">
-                            Skill {state.weapon.skill}+ | Damage{' '}
-                            {state.weapon.damage}
-                          </span>
+                        <div className="chest-item-card__body">
+                          <div className="chest-item-card__name">{item.name}</div>
+                          <div className="chest-item-card__stats">
+                            {item.type === 'weapon' && item.weapon
+                              ? `Weapon | Skill ${item.weapon.skill}+ | Damage ${item.weapon.damage}`
+                              : `Potion | Heal +${item.heal} HP`}
+                          </div>
+                          <div className="chest-item-card__desc">"{item.desc}"</div>
                         </div>
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
+                        <div className="chest-item-card__cta">TAKE</div>
+                      </button>
 
-            <div className="action-bar">
-              <button
-                type="button"
-                className="pixel-btn pixel-btn--primary"
-                onClick={() => handleTakeChest()}
-              >
-                TAKE
-              </button>
-              <button
-                type="button"
-                className="pixel-btn pixel-btn--secondary"
-                onClick={handleLeaveChest}
-              >
-                LEAVE CHEST
-              </button>
-            </div>
+                      {item.type === 'weapon' && (
+                        <div
+                          className="current-weapon-replace-box"
+                          data-testid="current-weapon-replace-info"
+                        >
+                          <div className="current-weapon-replace-label">
+                            Current Weapon:
+                          </div>
+                          <div className="current-weapon-replace-details">
+                            <span className="current-weapon-replace-name">
+                              {state.weapon.name}
+                            </span>
+                            <span className="current-weapon-replace-stats">
+                              Skill {state.weapon.skill}+ | Damage{' '}
+                              {state.weapon.damage}
+                            </span>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+
+              <div className="action-bar">
+                <button
+                  type="button"
+                  className="pixel-btn pixel-btn--primary"
+                  onClick={() => handleTakeChest()}
+                >
+                  TAKE
+                </button>
+                <button
+                  type="button"
+                  className="pixel-btn pixel-btn--secondary"
+                  onClick={handleLeaveChest}
+                >
+                  LEAVE CHEST
+                </button>
+              </div>
+            </section>
           </div>
         )}
 
@@ -544,26 +598,44 @@ export function App({ initialState, rng = Math.random }: AppProps) {
 
         {/* 7. GAME OVER SCREEN */}
         {state.screen === 'game_over' && (
-          <div className="screen-body screen-body--centered">
-            <div className="icon-showcase">
-              <PixelIcon name="skull" size={64} />
-            </div>
-            <h2 className="screen-heading">YOU HAVE FALLEN</h2>
-            <p className="death-cause">
-              {state.deathCause ?? 'Claimed by the Dark Wood'}
-            </p>
-            <div className="pixel-banner">
-              Lanterns Lit: {state.lamps} / 10
-            </div>
-            <div className="action-bar">
-              <button
-                type="button"
-                className="pixel-btn pixel-btn--primary"
-                onClick={handleRestart}
-              >
-                RESTART
-              </button>
-            </div>
+          <div className="screen-body">
+            <section className="enemy-card">
+              <div className="enemy-card__icon">
+                <PixelIcon name="skull" size={56} />
+              </div>
+              <div className="enemy-card__info">
+                <div className="enemy-card__name-row">
+                  <h2 className="enemy-card__name">YOU HAVE FALLEN</h2>
+                </div>
+                <div className="enemy-card__stats">
+                  <span className="enemy-stat-badge">DEFEATED</span>
+                  <span className="enemy-stat-badge">JOURNEY'S END</span>
+                </div>
+              </div>
+            </section>
+
+            <section className="combat-box">
+              <div className="combat-box__content">
+                <p className="death-cause">
+                  {state.deathCause ?? 'Claimed by the Dark Wood'}
+                </p>
+                <div className="pixel-banner">
+                  Lanterns Lit: {state.lamps} / 10
+                </div>
+                <p className="flavor-text">
+                  Your light fades into the choking gloom. The forest claims another soul.
+                </p>
+              </div>
+              <div className="action-bar">
+                <button
+                  type="button"
+                  className="pixel-btn pixel-btn--primary"
+                  onClick={handleRestart}
+                >
+                  RESTART
+                </button>
+              </div>
+            </section>
           </div>
         )}
       </main>
@@ -609,6 +681,12 @@ export function App({ initialState, rng = Math.random }: AppProps) {
                 CHANGELOG
               </h2>
               <div className="pixel-panel changelog-panel">
+                <div className="changelog-entry">
+                  <div className="changelog-version">v0.3.0 — 2026-11-02</div>
+                  <ul className="changelog-list">
+                    <li>Unified layout for lamp, sanctuary, respite, chest, and fallen screens with combat card design</li>
+                  </ul>
+                </div>
                 <div className="changelog-entry">
                   <div className="changelog-version">v0.2.6 — 2026-11-02</div>
                   <ul className="changelog-list">

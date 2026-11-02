@@ -185,6 +185,8 @@ describe('App - Screen Flows & Interactive UI', () => {
     render(<App initialState={initialLampState} rng={rng} />);
 
     expect(screen.getByText('YOU FIND AN UNLIT LAMP')).toBeInTheDocument();
+    expect(document.querySelector('.enemy-card')).toBeInTheDocument();
+    expect(document.querySelector('.combat-box')).toBeInTheDocument();
     expect(
       screen.queryByText(/PROGRESS: \d+ \/ 10 LIT/i)
     ).not.toBeInTheDocument();
@@ -199,6 +201,8 @@ describe('App - Screen Flows & Interactive UI', () => {
     // Sanctuary / Rest screen
     expect(screen.getByText('SANCTUARY')).toBeInTheDocument();
     expect(screen.getByText('YOU REST BY THE LIGHT')).toBeInTheDocument();
+    expect(document.querySelector('.enemy-card')).toBeInTheDocument();
+    expect(document.querySelector('.combat-box')).toBeInTheDocument();
     expect(
       screen.queryByText(/LAMP \d+ OF 10 IGNITED!/i)
     ).not.toBeInTheDocument();
@@ -243,6 +247,8 @@ describe('App - Screen Flows & Interactive UI', () => {
     );
 
     expect(screen.getByText('WOODLAND CHEST')).toBeInTheDocument();
+    expect(document.querySelector('.enemy-card')).toBeInTheDocument();
+    expect(document.querySelector('.combat-box')).toBeInTheDocument();
     expect(
       screen.getByText(
         'An ancient ironbound coffer rests among the twisted roots.'
@@ -343,6 +349,8 @@ describe('App - Screen Flows & Interactive UI', () => {
 
     expect(screen.getByText('GAME OVER')).toBeInTheDocument();
     expect(screen.getByText('YOU HAVE FALLEN')).toBeInTheDocument();
+    expect(document.querySelector('.enemy-card')).toBeInTheDocument();
+    expect(document.querySelector('.combat-box')).toBeInTheDocument();
     expect(
       screen.getByText(/Slain by Giant Spider/i)
     ).toBeInTheDocument();
@@ -373,6 +381,8 @@ describe('App - Screen Flows & Interactive UI', () => {
 
     await user.keyboard(' ');
     expect(screen.getByText('WOODLAND CHEST')).toBeInTheDocument();
+    expect(document.querySelector('.enemy-card')).toBeInTheDocument();
+    expect(document.querySelector('.combat-box')).toBeInTheDocument();
     expect(
       screen.getByText(
         'An ancient ironbound coffer rests among the twisted roots.'
@@ -414,6 +424,8 @@ describe('App - Screen Flows & Interactive UI', () => {
 
     expect(screen.getByText('THE TRAIL')).toBeInTheDocument();
     expect(screen.getByText('A MOMENT OF RESPITE')).toBeInTheDocument();
+    expect(document.querySelector('.enemy-card')).toBeInTheDocument();
+    expect(document.querySelector('.combat-box')).toBeInTheDocument();
     expect(
       screen.queryByText(/PROGRESS: \d+ \/ 10 LIT/i)
     ).not.toBeInTheDocument();
