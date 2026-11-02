@@ -48,6 +48,7 @@ describe('App - Screen Flows & Interactive UI', () => {
     expect(screen.getByText(/A monster blocks the trail!/i)).toBeInTheDocument();
     expect(screen.getByText(/A quick, rabid vermin\./i)).toBeInTheDocument();
     expect(screen.getByText(/Current weapon: Rusty Dagger/i)).toBeInTheDocument();
+    expect(screen.getByText(/Hits on 3\+ \| Damage: 2/i)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /FIGHT/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /FLEE/i })).toBeInTheDocument();
   });
@@ -78,6 +79,8 @@ describe('App - Screen Flows & Interactive UI', () => {
     expect(
       screen.getByText(/Initiative won! \(You: 6 vs Enemy: 2\)/i)
     ).toBeInTheDocument();
+    expect(screen.getByText(/Current weapon: Rusty Dagger/i)).toBeInTheDocument();
+    expect(screen.getByText(/Hits on 3\+ \| Damage: 2/i)).toBeInTheDocument();
     expect(screen.getByText(/Fleeing inflicts 1-3 damage\./i)).toBeInTheDocument();
 
     // Click STRIKE
