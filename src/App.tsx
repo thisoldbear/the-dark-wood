@@ -681,6 +681,12 @@ export function App({ initialState, rng = Math.random }: AppProps) {
               </h2>
               <div className="pixel-panel changelog-panel">
                 <div className="changelog-entry">
+                  <div className="changelog-version">v0.3.4 — 2026-11-02</div>
+                  <ul className="changelog-list">
+                    <li>Updated status header layout to column direction without center alignment</li>
+                  </ul>
+                </div>
+                <div className="changelog-entry">
                   <div className="changelog-version">v0.3.3 — 2026-11-02</div>
                   <ul className="changelog-list">
                     <li>Standardized weapon summary box across encounter and strike phases</li>

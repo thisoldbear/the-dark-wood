@@ -28,8 +28,7 @@
 /* Persistent Top Status Header */
 .status-header {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
+  flex-direction: column;
   justify-content: space-between;
   gap: 12px;
   padding-bottom: 12px;
