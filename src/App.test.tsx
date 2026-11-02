@@ -185,7 +185,9 @@ describe('App - Screen Flows & Interactive UI', () => {
     render(<App initialState={initialLampState} rng={rng} />);
 
     expect(screen.getByText('YOU FIND AN UNLIT LAMP')).toBeInTheDocument();
-    expect(screen.getByText('PROGRESS: 2 / 10 LIT')).toBeInTheDocument();
+    expect(
+      screen.queryByText(/PROGRESS: \d+ \/ 10 LIT/i)
+    ).not.toBeInTheDocument();
     expect(
       screen.getByText(
         /Light this lamp to dispel the suffocating black gloom\./i

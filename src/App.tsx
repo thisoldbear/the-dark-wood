@@ -172,9 +172,6 @@ export function App({ initialState, rng = Math.random }: AppProps) {
               <PixelIcon name="lamp" size={64} />
             </div>
             <h2 className="screen-heading">YOU FIND AN UNLIT LAMP</h2>
-            <div className="pixel-banner">
-              PROGRESS: {state.lamps} / 10 LIT
-            </div>
             <p className="flavor-text">
               Light this lamp to dispel the suffocating black gloom.
             </p>
@@ -628,6 +625,12 @@ export function App({ initialState, rng = Math.random }: AppProps) {
                 CHANGELOG
               </h2>
               <div className="pixel-panel changelog-panel">
+                <div className="changelog-entry">
+                  <div className="changelog-version">v0.2.3 — 2026-11-02</div>
+                  <ul className="changelog-list">
+                    <li>Removed progress section from Sacred Lamp screen</li>
+                  </ul>
+                </div>
                 <div className="changelog-entry">
                   <div className="changelog-version">v0.2.2 — 2026-11-02</div>
                   <ul className="changelog-list">
