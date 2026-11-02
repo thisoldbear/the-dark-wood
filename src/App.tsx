@@ -311,7 +311,7 @@ export function App({ initialState, rng = Math.random }: AppProps) {
                     <PixelIcon name="sword" size={28} />
                     <div>
                       <div className="weapon-summary-name">
-                        Weapon: {state.weapon.name}
+                        Current weapon: {state.weapon.name}
                       </div>
                       <div className="weapon-summary-stats">
                         Hits on {state.weapon.skill}+ | Damage:{' '}
@@ -681,6 +681,12 @@ export function App({ initialState, rng = Math.random }: AppProps) {
                 CHANGELOG
               </h2>
               <div className="pixel-panel changelog-panel">
+                <div className="changelog-entry">
+                  <div className="changelog-version">v0.3.1 — 2026-11-02</div>
+                  <ul className="changelog-list">
+                    <li>Updated weapon summary box text to "Current weapon:"</li>
+                  </ul>
+                </div>
                 <div className="changelog-entry">
                   <div className="changelog-version">v0.3.0 — 2026-11-02</div>
                   <ul className="changelog-list">

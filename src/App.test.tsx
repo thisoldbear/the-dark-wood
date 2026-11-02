@@ -46,6 +46,7 @@ describe('App - Screen Flows & Interactive UI', () => {
     expect(screen.getByText('Dire Rat')).toBeInTheDocument();
     expect(screen.getByText(/A monster blocks the trail!/i)).toBeInTheDocument();
     expect(screen.getByText(/A quick, rabid vermin\./i)).toBeInTheDocument();
+    expect(screen.getByText(/Current weapon: Rusty Dagger/i)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /FIGHT/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /FLEE/i })).toBeInTheDocument();
   });
