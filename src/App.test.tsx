@@ -412,7 +412,9 @@ describe('App - Screen Flows & Interactive UI', () => {
 
     expect(screen.getByText('THE TRAIL')).toBeInTheDocument();
     expect(screen.getByText('A MOMENT OF RESPITE')).toBeInTheDocument();
-    expect(screen.getByText('PROGRESS: 2 / 10 LIT')).toBeInTheDocument();
+    expect(
+      screen.queryByText(/PROGRESS: \d+ \/ 10 LIT/i)
+    ).not.toBeInTheDocument();
     expect(
       screen.getByText('A cold breeze whispers through the hollow branches.')
     ).toBeInTheDocument();
