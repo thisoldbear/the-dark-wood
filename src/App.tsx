@@ -171,7 +171,7 @@ export function App({ initialState, rng = Math.random }: AppProps) {
             <div className="icon-showcase">
               <PixelIcon name="lamp" size={64} />
             </div>
-            <h2 className="screen-heading">SACRED LAMP FOUND!</h2>
+            <h2 className="screen-heading">YOU FIND AN UNLIT LAMP</h2>
             <div className="pixel-banner">
               PROGRESS: {state.lamps} / 10 LIT
             </div>
@@ -184,7 +184,7 @@ export function App({ initialState, rng = Math.random }: AppProps) {
                 className="pixel-btn pixel-btn--primary"
                 onClick={handleLightLamp}
               >
-                LIGHT
+                LIGHT THE LAMP
               </button>
             </div>
           </div>
@@ -628,6 +628,12 @@ export function App({ initialState, rng = Math.random }: AppProps) {
                 CHANGELOG
               </h2>
               <div className="pixel-panel changelog-panel">
+                <div className="changelog-entry">
+                  <div className="changelog-version">v0.2.2 — 2026-11-02</div>
+                  <ul className="changelog-list">
+                    <li>Updated lamp screen heading to "YOU FIND AN UNLIT LAMP" and button to "LIGHT THE LAMP"</li>
+                  </ul>
+                </div>
                 <div className="changelog-entry">
                   <div className="changelog-version">v0.2.1 — 2026-10-27</div>
                   <ul className="changelog-list">

@@ -88,7 +88,7 @@ describe('App - Screen Flows & Interactive UI', () => {
 
     // Click PROCEED -> Lamp screen
     await user.click(screen.getByRole('button', { name: /PROCEED/i }));
-    expect(screen.getByText('SACRED LAMP FOUND!')).toBeInTheDocument();
+    expect(screen.getByText('YOU FIND AN UNLIT LAMP')).toBeInTheDocument();
   });
 
   it('displays player_strike_result and enemy_turn_result with DiceBox when enemy survives strike', async () => {
@@ -151,7 +151,7 @@ describe('App - Screen Flows & Interactive UI', () => {
     expect(screen.getByText(/HP: 11\/13/i)).toBeInTheDocument();
 
     await user.click(screen.getByRole('button', { name: /PROCEED/i }));
-    expect(screen.getByText('SACRED LAMP FOUND!')).toBeInTheDocument();
+    expect(screen.getByText('YOU FIND AN UNLIT LAMP')).toBeInTheDocument();
     unmount();
 
     // Now test fleeing with 0 lamps lit -> loses D3 HP
@@ -184,7 +184,7 @@ describe('App - Screen Flows & Interactive UI', () => {
 
     render(<App initialState={initialLampState} rng={rng} />);
 
-    expect(screen.getByText('SACRED LAMP FOUND!')).toBeInTheDocument();
+    expect(screen.getByText('YOU FIND AN UNLIT LAMP')).toBeInTheDocument();
     expect(screen.getByText('PROGRESS: 2 / 10 LIT')).toBeInTheDocument();
     expect(
       screen.getByText(
@@ -192,7 +192,7 @@ describe('App - Screen Flows & Interactive UI', () => {
       )
     ).toBeInTheDocument();
 
-    await user.click(screen.getByRole('button', { name: /LIGHT/i }));
+    await user.click(screen.getByRole('button', { name: /LIGHT THE LAMP/i }));
 
     // Sanctuary / Rest screen
     expect(screen.getByText('SANCTUARY')).toBeInTheDocument();
@@ -206,7 +206,7 @@ describe('App - Screen Flows & Interactive UI', () => {
     ).toBeInTheDocument();
 
     await user.click(screen.getByRole('button', { name: /PROCEED/i }));
-    expect(screen.getByText('SACRED LAMP FOUND!')).toBeInTheDocument();
+    expect(screen.getByText('YOU FIND AN UNLIT LAMP')).toBeInTheDocument();
   });
 
   it('handles Chest screen: shows current weapon details when a weapon is found and replaces it on TAKE', async () => {
@@ -261,7 +261,7 @@ describe('App - Screen Flows & Interactive UI', () => {
 
     // Take the weapon -> equips Silver Rapier and transitions to next encounter (lamp)
     await user.click(screen.getByRole('button', { name: /^TAKE$/i }));
-    expect(screen.getByText('SACRED LAMP FOUND!')).toBeInTheDocument();
+    expect(screen.getByText('YOU FIND AN UNLIT LAMP')).toBeInTheDocument();
     expect(screen.getByText(/Silver Rapier \(3\+ \/ 4 DMG\)/i)).toBeInTheDocument();
   });
 
@@ -300,7 +300,7 @@ describe('App - Screen Flows & Interactive UI', () => {
     };
 
     render(<App initialState={ninthLampState} />);
-    await user.click(screen.getByRole('button', { name: /LIGHT/i }));
+    await user.click(screen.getByRole('button', { name: /LIGHT THE LAMP/i }));
 
     expect(screen.getByText('DARK WOOD CONQUERED')).toBeInTheDocument();
     expect(
@@ -377,7 +377,7 @@ describe('App - Screen Flows & Interactive UI', () => {
     expect(screen.getByText('Hunting Spear')).toBeInTheDocument();
 
     await user.click(screen.getByRole('button', { name: /LEAVE CHEST/i }));
-    expect(screen.getByText('SACRED LAMP FOUND!')).toBeInTheDocument();
+    expect(screen.getByText('YOU FIND AN UNLIT LAMP')).toBeInTheDocument();
   });
 
   it('allows F hotkey to flee combat even when a button has focus', async () => {
@@ -420,7 +420,7 @@ describe('App - Screen Flows & Interactive UI', () => {
     expect(proceedBtn).toBeInTheDocument();
 
     await user.click(proceedBtn);
-    expect(screen.getByText('SACRED LAMP FOUND!')).toBeInTheDocument();
+    expect(screen.getByText('YOU FIND AN UNLIT LAMP')).toBeInTheDocument();
   });
 
   it('maintains a fixed, identical game-card height across all screens and combat phases', () => {
