@@ -284,7 +284,7 @@ export function App({ initialState, rng = Math.random }: AppProps) {
                     {state.combat.enemy.name}
                   </h2>
                   <span className="enemy-card__skill">
-                    Skill: {state.combat.enemy.skill}+ | Dmg:{' '}
+                    Hits on: {state.combat.enemy.skill}+ | Damage:{' '}
                     {state.combat.enemy.damage}
                   </span>
                 </div>
@@ -681,6 +681,12 @@ export function App({ initialState, rng = Math.random }: AppProps) {
                 CHANGELOG
               </h2>
               <div className="pixel-panel changelog-panel">
+                <div className="changelog-entry">
+                  <div className="changelog-version">v0.3.2 — 2026-11-02</div>
+                  <ul className="changelog-list">
+                    <li>Updated enemy card stat labels to "Hits on:" and "Damage:"</li>
+                  </ul>
+                </div>
                 <div className="changelog-entry">
                   <div className="changelog-version">v0.3.1 — 2026-11-02</div>
                   <ul className="changelog-list">

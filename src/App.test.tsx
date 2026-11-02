@@ -44,6 +44,7 @@ describe('App - Screen Flows & Interactive UI', () => {
     expect(screen.getByText(/HP: 13\/13/i)).toBeInTheDocument();
     expect(screen.getByText(/L: 0\/10/i)).toBeInTheDocument();
     expect(screen.getByText('Dire Rat')).toBeInTheDocument();
+    expect(screen.getByText(/Hits on: 4\+ \| Damage: 1/i)).toBeInTheDocument();
     expect(screen.getByText(/A monster blocks the trail!/i)).toBeInTheDocument();
     expect(screen.getByText(/A quick, rabid vermin\./i)).toBeInTheDocument();
     expect(screen.getByText(/Current weapon: Rusty Dagger/i)).toBeInTheDocument();
@@ -376,6 +377,7 @@ describe('App - Screen Flows & Interactive UI', () => {
 
     await user.keyboard('{Enter}');
     expect(screen.getByText('Dire Rat')).toBeInTheDocument();
+    expect(screen.getByText(/Hits on: 4\+ \| Damage: 1/i)).toBeInTheDocument();
 
     await user.keyboard('f');
     expect(screen.getByText('FLED COMBAT')).toBeInTheDocument();
