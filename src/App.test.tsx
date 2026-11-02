@@ -20,7 +20,7 @@ function createSequenceRng(values: number[]) {
 }
 
 describe('App - Screen Flows & Interactive UI', () => {
-  it('renders Title screen with double border, crossed swords icon, rules summary, and ENTER button', () => {
+  it('renders Title screen with crossed swords icon, rules summary, and ENTER button', () => {
     render(<App />);
     expect(screen.getByText('THE DARK WOOD')).toBeInTheDocument();
     expect(screen.getByText('A Fantasy Dice RPG')).toBeInTheDocument();

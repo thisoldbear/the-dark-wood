@@ -104,19 +104,9 @@ export function App({ initialState, rng = Math.random }: AppProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state, showChangelog, rng]);
 
-  const isDoubleBorderScreen =
-    state.screen === 'title' ||
-    state.screen === 'victory' ||
-    state.screen === 'game_over';
-
   return (
     <div className="dark-wood-viewport">
-      <main
-        className={`game-card ${
-          isDoubleBorderScreen ? 'game-card--double-border' : ''
-        }`}
-        data-testid="game-card"
-      >
+      <main className="game-card" data-testid="game-card">
         {state.screen !== 'title' && (
           <header className="status-header" data-testid="status-header">
             <div className="status-header__left">
@@ -619,6 +609,13 @@ export function App({ initialState, rng = Math.random }: AppProps) {
                 CHANGELOG
               </h2>
               <div className="pixel-panel changelog-panel">
+                <div className="changelog-entry">
+                  <div className="changelog-version">v0.2.6 — 2026-11-02</div>
+                  <ul className="changelog-list">
+                    <li>Removed border and double border from game card</li>
+                    <li>Set dark-wood-viewport to solid var(--bg-card) background</li>
+                  </ul>
+                </div>
                 <div className="changelog-entry">
                   <div className="changelog-version">v0.2.5 — 2026-11-02</div>
                   <ul className="changelog-list">
