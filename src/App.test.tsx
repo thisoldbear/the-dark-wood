@@ -589,6 +589,7 @@ describe('App - Screen Flows & Interactive UI', () => {
     }
 
     const rootStyles = window.getComputedStyle(document.documentElement);
+    expect(rootStyles.getPropertyValue('--min-box-height').trim()).toBe('350px');
     expect(rootStyles.getPropertyValue('--lime-primary').trim()).toBe('');
     expect(rootStyles.getPropertyValue('--lime-olive').trim()).toBe('');
     expect(rootStyles.getPropertyValue('--bg-recessed').trim()).not.toBe('#1a2e05');
