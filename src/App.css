@@ -420,7 +420,8 @@
 .chest-item-card {
   width: 100%;
   display: flex;
-  align-items: center;
+  flex-wrap: wrap;
+  align-items: flex-start;
   gap: 12px;
   background-color: var(--bg-recessed);
   border: 0px none;
@@ -450,6 +451,7 @@
 
 .chest-item-card__body {
   flex: 1;
+  min-width: 0;
 }
 
 .chest-item-card__name {
@@ -470,12 +472,14 @@
 }
 
 .chest-item-card__cta {
+  width: 100%;
+  margin-top: 6px;
+  text-align: center;
   font-family: var(--font-header);
   font-size: 0.75rem;
   background-color: var(--lime-bright);
   color: var(--bg-viewport-alt);
   padding: 8px 10px;
-  flex-shrink: 0;
 }
 
 /* Interactive Bottom Action Bar & Borderless Monochromatic Buttons */
@@ -798,21 +802,6 @@
     max-width: 100%;
     padding: 14px;
     gap: 10px;
-  }
-
-  .chest-item-card {
-    flex-wrap: wrap;
-    align-items: flex-start;
-  }
-
-  .chest-item-card__body {
-    min-width: 0;
-  }
-
-  .chest-item-card__cta {
-    width: 100%;
-    margin-top: 6px;
-    text-align: center;
   }
 
   .inventory-item-card {
