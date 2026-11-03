@@ -287,7 +287,7 @@ export function App({ initialState, rng = Math.random }: AppProps) {
               </div>
               <div className="enemy-card__info">
                 <div className="enemy-card__name-row">
-                  <h2 className="enemy-card__name">A MOMENT OF RESPITE</h2>
+                  <h2 className="enemy-card__name">RESPITE</h2>
                 </div>
                 <div className="enemy-card__stats">
                   <span className="enemy-stat-badge">SAFE HAVEN</span>
@@ -552,7 +552,7 @@ export function App({ initialState, rng = Math.random }: AppProps) {
               <div className="enemy-card__info">
                 <div className="enemy-card__name-row">
                   <h2 className="enemy-card__name">
-                    {state.chest.isLocked ? 'LOCKED CHEST' : 'WOODLAND CHEST'}
+                    {state.chest.isLocked ? 'LOCKED CHEST' : 'CHEST'}
                   </h2>
                 </div>
                 <div className="enemy-card__stats">
@@ -613,7 +613,7 @@ export function App({ initialState, rng = Math.random }: AppProps) {
               <div className="enemy-card__info">
                 <div className="enemy-card__name-row">
                   <h2 className="enemy-card__name">
-                    {state.chest.isLocked ? 'LOCKED CHEST (OPEN)' : 'WOODLAND CHEST'}
+                    {state.chest.isLocked ? 'LOCKED CHEST (OPEN)' : 'CHEST'}
                   </h2>
                 </div>
                 <div className="enemy-card__stats">

@@ -180,7 +180,7 @@
 /* Enemy Card & Combat Box */
 .enemy-card {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 16px;
   background-color: var(--bg-panel);
   border: 2px solid var(--lime-bright);
@@ -422,7 +422,7 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
-  background-color: var(--bg-recessed);
+  background-color: var(--bg-hover-dark);
   border: 0px none;
   color: var(--lime-bright);
   padding: 10px 14px;

@@ -253,7 +253,7 @@ describe('App - Screen Flows & Interactive UI', () => {
       <App initialState={initialChestState} rng={() => dieToFloat(1, 6)} />
     );
 
-    expect(screen.getByText('WOODLAND CHEST')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 2, name: 'CHEST' })).toBeInTheDocument();
     expect(document.querySelector('.enemy-card')).toBeInTheDocument();
     expect(document.querySelector('.combat-box')).toBeInTheDocument();
     expect(
@@ -435,7 +435,7 @@ describe('App - Screen Flows & Interactive UI', () => {
     expect(screen.getByText('FLED COMBAT')).toBeInTheDocument();
 
     await user.keyboard(' ');
-    expect(screen.getByText('WOODLAND CHEST')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 2, name: 'CHEST' })).toBeInTheDocument();
     expect(document.querySelector('.enemy-card')).toBeInTheDocument();
     expect(document.querySelector('.combat-box')).toBeInTheDocument();
     expect(
@@ -477,7 +477,7 @@ describe('App - Screen Flows & Interactive UI', () => {
     render(<App initialState={pauseState} rng={() => dieToFloat(1, 6)} />);
 
     expect(screen.getByText('THE TRAIL')).toBeInTheDocument();
-    expect(screen.getByText('A MOMENT OF RESPITE')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 2, name: 'RESPITE' })).toBeInTheDocument();
     expect(document.querySelector('.enemy-card')).toBeInTheDocument();
     expect(document.querySelector('.combat-box')).toBeInTheDocument();
     expect(
