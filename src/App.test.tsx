@@ -93,7 +93,7 @@ describe('App - Screen Flows & Interactive UI', () => {
 
     // Click PROCEED -> Lamp screen
     await user.click(screen.getByRole('button', { name: /PROCEED/i }));
-    expect(screen.getByText('YOU FIND AN UNLIT LAMP')).toBeInTheDocument();
+    expect(screen.getByText('UNLIT LAMP')).toBeInTheDocument();
   });
 
   it('displays player_strike_result and enemy_turn_result with DiceBox when enemy survives strike', async () => {
@@ -156,7 +156,7 @@ describe('App - Screen Flows & Interactive UI', () => {
     expect(screen.getByText(/HP: 11\/13/i)).toBeInTheDocument();
 
     await user.click(screen.getByRole('button', { name: /PROCEED/i }));
-    expect(screen.getByText('YOU FIND AN UNLIT LAMP')).toBeInTheDocument();
+    expect(screen.getByText('UNLIT LAMP')).toBeInTheDocument();
     unmount();
 
     // Now test fleeing with 0 lamps lit -> loses D3 HP
@@ -189,7 +189,7 @@ describe('App - Screen Flows & Interactive UI', () => {
 
     render(<App initialState={initialLampState} rng={rng} />);
 
-    expect(screen.getByText('YOU FIND AN UNLIT LAMP')).toBeInTheDocument();
+    expect(screen.getByText('UNLIT LAMP')).toBeInTheDocument();
     expect(document.querySelector('.enemy-card')).toBeInTheDocument();
     expect(document.querySelector('.combat-box')).toBeInTheDocument();
     expect(
@@ -205,7 +205,7 @@ describe('App - Screen Flows & Interactive UI', () => {
 
     // Sanctuary / Rest screen
     expect(screen.getByText('SANCTUARY')).toBeInTheDocument();
-    expect(screen.getByText('YOU REST BY THE LIGHT')).toBeInTheDocument();
+    expect(screen.getByText('LIT LAMP')).toBeInTheDocument();
     expect(document.querySelector('.enemy-card')).toBeInTheDocument();
     expect(document.querySelector('.combat-box')).toBeInTheDocument();
     expect(
@@ -219,7 +219,7 @@ describe('App - Screen Flows & Interactive UI', () => {
     ).toBeInTheDocument();
 
     await user.click(screen.getByRole('button', { name: /PROCEED/i }));
-    expect(screen.getByText('YOU FIND AN UNLIT LAMP')).toBeInTheDocument();
+    expect(screen.getByText('UNLIT LAMP')).toBeInTheDocument();
   });
 
   it('handles Chest screen: shows current weapon details when a weapon is found and replaces it on TAKE', async () => {
@@ -293,7 +293,7 @@ describe('App - Screen Flows & Interactive UI', () => {
 
     // Close chest -> transitions to next encounter (lamp)
     await user.click(screen.getByRole('button', { name: /CLOSE CHEST/i }));
-    expect(screen.getByText('YOU FIND AN UNLIT LAMP')).toBeInTheDocument();
+    expect(screen.getByText('UNLIT LAMP')).toBeInTheDocument();
   });
 
   it('does not duplicate current weapon display in opened chest', () => {
@@ -445,7 +445,7 @@ describe('App - Screen Flows & Interactive UI', () => {
     ).toBeInTheDocument();
 
     await user.click(screen.getByRole('button', { name: /LEAVE CHEST/i }));
-    expect(screen.getByText('YOU FIND AN UNLIT LAMP')).toBeInTheDocument();
+    expect(screen.getByText('UNLIT LAMP')).toBeInTheDocument();
   });
 
   it('allows F hotkey to flee combat even when a button has focus', async () => {
@@ -492,7 +492,7 @@ describe('App - Screen Flows & Interactive UI', () => {
     expect(proceedBtn).toBeInTheDocument();
 
     await user.click(proceedBtn);
-    expect(screen.getByText('YOU FIND AN UNLIT LAMP')).toBeInTheDocument();
+    expect(screen.getByText('UNLIT LAMP')).toBeInTheDocument();
   });
 
   it('maintains a fixed, identical game-card height across all screens and combat phases', () => {

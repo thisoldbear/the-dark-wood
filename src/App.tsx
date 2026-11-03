@@ -210,7 +210,7 @@ export function App({ initialState, rng = Math.random }: AppProps) {
               </div>
               <div className="enemy-card__info">
                 <div className="enemy-card__name-row">
-                  <h2 className="enemy-card__name">YOU FIND AN UNLIT LAMP</h2>
+                  <h2 className="enemy-card__name">UNLIT LAMP</h2>
                 </div>
                 <div className="enemy-card__stats">
                   <span className="enemy-stat-badge">UNLIT</span>
@@ -247,7 +247,7 @@ export function App({ initialState, rng = Math.random }: AppProps) {
               </div>
               <div className="enemy-card__info">
                 <div className="enemy-card__name-row">
-                  <h2 className="enemy-card__name">YOU REST BY THE LIGHT</h2>
+                  <h2 className="enemy-card__name">LIT LAMP</h2>
                 </div>
                 <div className="enemy-card__stats">
                   <span className="enemy-stat-badge">REST SITE</span>
