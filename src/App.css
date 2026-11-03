@@ -420,9 +420,8 @@
 .chest-item-card {
   width: 100%;
   display: flex;
-  flex-wrap: wrap;
-  align-items: flex-start;
-  gap: 12px;
+  flex-direction: column;
+  gap: 10px;
   background-color: var(--bg-recessed);
   border: 0px none;
   color: var(--lime-bright);
@@ -441,12 +440,20 @@
   transform: translateY(2px);
 }
 
+.chest-item-card__main {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
 .chest-item-card__icon {
   background-color: var(--bg-recessed);
   padding: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
 }
 
 .chest-item-card__body {
@@ -473,7 +480,6 @@
 
 .chest-item-card__cta {
   width: 100%;
-  margin-top: 6px;
   text-align: center;
   font-family: var(--font-header);
   font-size: 0.75rem;

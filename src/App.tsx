@@ -639,22 +639,24 @@ export function App({ initialState, rng = Math.random }: AppProps) {
                             isSelected ? 'chest-item-card--selected' : ''
                           }`}
                         >
-                          <div className="chest-item-card__icon">
-                            <PixelIcon
-                              name={item.type === 'weapon' ? 'sword' : item.type === 'armor' ? 'shield' : 'potion'}
-                              size={36}
-                            />
-                          </div>
-                          <div className="chest-item-card__body">
-                            <div className="chest-item-card__name">{item.name}</div>
-                            <div className="chest-item-card__stats">
-                              {item.type === 'weapon' && item.weapon
-                                ? `Weapon | Skill ${item.weapon.skill}+ | Damage ${item.weapon.damage}`
-                                : item.type === 'armor' && item.armor
-                                ? `Armor | Defense -${item.armor.defense} DMG`
-                                : `Potion | Heal +${item.heal} HP`}
+                          <div className="chest-item-card__main">
+                            <div className="chest-item-card__icon">
+                              <PixelIcon
+                                name={item.type === 'weapon' ? 'sword' : item.type === 'armor' ? 'shield' : 'potion'}
+                                size={36}
+                              />
                             </div>
-                            <div className="chest-item-card__desc">"{item.desc}"</div>
+                            <div className="chest-item-card__body">
+                              <div className="chest-item-card__name">{item.name}</div>
+                              <div className="chest-item-card__stats">
+                                {item.type === 'weapon' && item.weapon
+                                  ? `Weapon | Skill ${item.weapon.skill}+ | Damage ${item.weapon.damage}`
+                                  : item.type === 'armor' && item.armor
+                                  ? `Armor | Defense -${item.armor.defense} DMG`
+                                  : `Potion | Heal +${item.heal} HP`}
+                              </div>
+                              <div className="chest-item-card__desc">"{item.desc}"</div>
+                            </div>
                           </div>
                           <button
                             type="button"
