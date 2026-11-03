@@ -274,7 +274,8 @@
 }
 
 .weapon-summary-box {
-  display: inline-flex;
+  display: flex;
+  width: 100%;
   align-items: center;
   gap: 12px;
   background-color: var(--bg-recessed);
@@ -288,11 +289,13 @@
   font-size: 0.75rem;
   color: var(--lime-bright);
   margin-bottom: 4px;
+  text-align: left;
 }
 
 .weapon-summary-stats {
   font-size: 1.25rem;
   color: var(--lime-muted);
+  text-align: left;
 }
 
 .combat-log {
@@ -645,6 +648,8 @@
 }
 
 .combat-weighed-down-note {
+  width: 100%;
+  text-align: left;
   font-family: var(--font-header);
   font-size: 0.72rem;
   color: var(--lime-bright);
