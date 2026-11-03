@@ -5,6 +5,12 @@ export interface Weapon {
   desc: string;
 }
 
+export interface Armor {
+  name: string;
+  defense: number; // Reduces incoming attack damage
+  desc: string;
+}
+
 export type EnemyType = "rat" | "zombie" | "wolf" | "spider";
 
 export interface Enemy {
@@ -18,13 +24,15 @@ export interface Enemy {
   desc: string;
 }
 
-export type ItemType = "potion" | "weapon" | "double_potion";
+export type ItemType = "potion" | "weapon" | "double_potion" | "armor";
 
 export interface Item {
   name: string;
   type: ItemType;
   heal?: number;
   weapon?: Weapon;
+  armor?: Armor;
+  instant?: boolean;
   desc: string;
 }
 
@@ -57,6 +65,10 @@ export interface ChestState {
   items: Item[];
   selectedIndex: number;
   message: string;
+  isLocked?: boolean;
+  opened?: boolean;
+  lastUnlockRoll?: number;
+  unlockFailed?: boolean;
 }
 
 export type GameScreen =
@@ -75,6 +87,8 @@ export interface GameState {
   maxHp: number;
   lamps: number;
   weapon: Weapon;
+  armor?: Armor;
+  inventory: Item[];
   combat?: CombatState;
   chest?: ChestState;
   pauseMessage?: string;
