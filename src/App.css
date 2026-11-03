@@ -641,7 +641,7 @@
 
 .weighed-down-banner {
   display: flex;
-  align-items: center;
+  flex-direction: column;
   gap: 10px;
   background-color: var(--bg-recessed);
   border: 2px solid var(--lime-bright);
