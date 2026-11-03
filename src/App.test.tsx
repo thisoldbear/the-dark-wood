@@ -610,6 +610,8 @@ describe('App - Screen Flows & Interactive UI', () => {
     const cssText = mediaRules.map((r) => r.cssText).join(' ');
     expect(cssText).toContain('.game-card');
     expect(cssText).toContain('.dark-wood-viewport');
+    expect(cssText).toContain('.inventory-item-card');
+    expect(cssText).toContain('.inventory-item-actions');
   });
 
   it('flags weighed down warning when pack contains > 3 items', () => {
