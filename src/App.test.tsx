@@ -40,7 +40,7 @@ describe('App - Screen Flows & Interactive UI', () => {
 
     await user.click(screen.getByRole('button', { name: /ENTER/i }));
 
-    expect(screen.getByText('COMBAT')).toBeInTheDocument();
+    expect(document.querySelector('.status-header__title')).toHaveTextContent('The Dark Wood');
     expect(screen.getByText(/HP: 13\/13/i)).toBeInTheDocument();
     expect(screen.getByText(/L: 0\/10/i)).toBeInTheDocument();
     expect(screen.getByText('Dire Rat')).toBeInTheDocument();
@@ -93,7 +93,7 @@ describe('App - Screen Flows & Interactive UI', () => {
 
     // Click PROCEED -> Lamp screen
     await user.click(screen.getByRole('button', { name: /PROCEED/i }));
-    expect(screen.getByText('YOU FIND AN UNLIT LAMP')).toBeInTheDocument();
+    expect(screen.getByText('UNLIT LAMP')).toBeInTheDocument();
   });
 
   it('displays player_strike_result and enemy_turn_result with DiceBox when enemy survives strike', async () => {
@@ -156,7 +156,7 @@ describe('App - Screen Flows & Interactive UI', () => {
     expect(screen.getByText(/HP: 11\/13/i)).toBeInTheDocument();
 
     await user.click(screen.getByRole('button', { name: /PROCEED/i }));
-    expect(screen.getByText('YOU FIND AN UNLIT LAMP')).toBeInTheDocument();
+    expect(screen.getByText('UNLIT LAMP')).toBeInTheDocument();
     unmount();
 
     // Now test fleeing with 0 lamps lit -> loses D3 HP
@@ -189,7 +189,7 @@ describe('App - Screen Flows & Interactive UI', () => {
 
     render(<App initialState={initialLampState} rng={rng} />);
 
-    expect(screen.getByText('YOU FIND AN UNLIT LAMP')).toBeInTheDocument();
+    expect(screen.getByText('UNLIT LAMP')).toBeInTheDocument();
     expect(document.querySelector('.enemy-card')).toBeInTheDocument();
     expect(document.querySelector('.combat-box')).toBeInTheDocument();
     expect(
@@ -204,8 +204,8 @@ describe('App - Screen Flows & Interactive UI', () => {
     await user.click(screen.getByRole('button', { name: /LIGHT THE LAMP/i }));
 
     // Sanctuary / Rest screen
-    expect(screen.getByText('SANCTUARY')).toBeInTheDocument();
-    expect(screen.getByText('YOU REST BY THE LIGHT')).toBeInTheDocument();
+    expect(document.querySelector('.status-header__title')).toHaveTextContent('The Dark Wood');
+    expect(screen.getByText('LIT LAMP')).toBeInTheDocument();
     expect(document.querySelector('.enemy-card')).toBeInTheDocument();
     expect(document.querySelector('.combat-box')).toBeInTheDocument();
     expect(
@@ -219,7 +219,7 @@ describe('App - Screen Flows & Interactive UI', () => {
     ).toBeInTheDocument();
 
     await user.click(screen.getByRole('button', { name: /PROCEED/i }));
-    expect(screen.getByText('YOU FIND AN UNLIT LAMP')).toBeInTheDocument();
+    expect(screen.getByText('UNLIT LAMP')).toBeInTheDocument();
   });
 
   it('handles Chest screen: shows current weapon details when a weapon is found and replaces it on TAKE', async () => {
@@ -244,6 +244,8 @@ describe('App - Screen Flows & Interactive UI', () => {
         ],
         selectedIndex: 0,
         message: 'An ancient ironbound coffer rests among the twisted roots.',
+        isLocked: false,
+        opened: false,
       },
     };
 
@@ -251,7 +253,7 @@ describe('App - Screen Flows & Interactive UI', () => {
       <App initialState={initialChestState} rng={() => dieToFloat(1, 6)} />
     );
 
-    expect(screen.getByText('WOODLAND CHEST')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 2, name: 'CHEST' })).toBeInTheDocument();
     expect(document.querySelector('.enemy-card')).toBeInTheDocument();
     expect(document.querySelector('.combat-box')).toBeInTheDocument();
     expect(
@@ -259,28 +261,42 @@ describe('App - Screen Flows & Interactive UI', () => {
         'An ancient ironbound coffer rests among the twisted roots.'
       )
     ).toBeInTheDocument();
-    expect(screen.getByText('Silver Rapier')).toBeInTheDocument();
 
-    // Displays details of the current weapon that taking this weapon will replace
-    const replaceBox = screen.getByTestId('current-weapon-replace-info');
-    expect(replaceBox).toHaveTextContent(/Current Weapon/i);
-    expect(replaceBox).not.toHaveTextContent(/Replaces Current Weapon/i);
-    expect(replaceBox).toHaveTextContent(/Rusty Dagger/i);
-    expect(replaceBox).toHaveTextContent(/Skill 3\+/i);
-    expect(replaceBox).toHaveTextContent(/Damage 2/i);
+    // Click OPEN CHEST -> opens chest to show items
+    await user.click(screen.getByRole('button', { name: /OPEN CHEST/i }));
+    expect(screen.getByText('Silver Rapier')).toBeInTheDocument();
+    expect(
+      screen.queryByText(
+        'An ancient ironbound coffer rests among the twisted roots.'
+      )
+    ).not.toBeInTheDocument();
+
+    // Current weapon is shown in the inventory section, not doubled up inside chest
+    expect(
+      screen.queryByTestId('current-weapon-replace-info')
+    ).not.toBeInTheDocument();
+    expect(screen.getByTestId('inventory-section')).toHaveTextContent('Rusty Dagger');
 
     // No CYCLE button on chest screen
     expect(
       screen.queryByRole('button', { name: /CYCLE/i })
     ).not.toBeInTheDocument();
 
-    // Take the weapon -> equips Silver Rapier and transitions to next encounter (lamp)
+    // Take the weapon -> adds to inventory
     await user.click(screen.getByRole('button', { name: /^TAKE$/i }));
-    expect(screen.getByText('YOU FIND AN UNLIT LAMP')).toBeInTheDocument();
+    expect(screen.getByTestId('inventory-section')).toHaveTextContent('Silver Rapier');
+
+    // Tap to equip Silver Rapier from inventory -> swaps with Rusty Dagger
+    await user.click(screen.getByTestId('inventory-use-0'));
     expect(screen.getByText(/Silver Rapier \(3\+ \/ 4 DMG\)/i)).toBeInTheDocument();
+    expect(screen.getByTestId('inventory-section')).toHaveTextContent('Rusty Dagger');
+
+    // Close chest -> transitions to next encounter (lamp)
+    await user.click(screen.getByRole('button', { name: /CLOSE CHEST/i }));
+    expect(screen.getByText('UNLIT LAMP')).toBeInTheDocument();
   });
 
-  it('does not show weapon replacement info when chest contains a potion', () => {
+  it('does not duplicate current weapon display in opened chest', () => {
     const potionChestState: GameState = {
       ...createInitialState(),
       screen: 'chest',
@@ -295,6 +311,7 @@ describe('App - Screen Flows & Interactive UI', () => {
         ],
         selectedIndex: 0,
         message: 'An ancient ironbound coffer rests among the twisted roots.',
+        opened: true,
       },
     };
 
@@ -303,6 +320,37 @@ describe('App - Screen Flows & Interactive UI', () => {
     expect(
       screen.queryByTestId('current-weapon-replace-info')
     ).not.toBeInTheDocument();
+  });
+
+  it('handles TAKE ALL button in chest: stows all items into inventory and displays empty chest message', async () => {
+    const user = userEvent.setup();
+    const multiItemChestState: GameState = {
+      ...createInitialState(),
+      screen: 'chest',
+      chest: {
+        items: [
+          { name: 'Bandage', type: 'potion', heal: 2, desc: 'Heals 2 HP.' },
+          {
+            name: 'Spiked Club',
+            type: 'weapon',
+            weapon: { name: 'Spiked Club', skill: 4, damage: 3, desc: 'Heavy.' },
+            desc: 'Heavy.',
+          },
+        ],
+        selectedIndex: 0,
+        message: 'Loot',
+        opened: true,
+      },
+    };
+
+    render(<App initialState={multiItemChestState} />);
+    expect(screen.getByText('Bandage')).toBeInTheDocument();
+    expect(screen.getByText('Spiked Club')).toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: /TAKE ALL/i }));
+    expect(screen.getByText('The chest is empty.')).toBeInTheDocument();
+    expect(screen.getByTestId('inventory-section')).toHaveTextContent('Bandage');
+    expect(screen.getByTestId('inventory-section')).toHaveTextContent('Spiked Club');
   });
 
   it('handles Victory screen when 10th lamp is lit and PLAY AGAIN resets game', async () => {
@@ -352,7 +400,7 @@ describe('App - Screen Flows & Interactive UI', () => {
     render(<App initialState={doomedState} rng={rng} />);
     await user.click(screen.getByRole('button', { name: /FIGHT/i }));
 
-    expect(screen.getByText('GAME OVER')).toBeInTheDocument();
+    expect(document.querySelector('.status-header__title')).toHaveTextContent('The Dark Wood');
     expect(screen.getByText('YOU HAVE FALLEN')).toBeInTheDocument();
     expect(document.querySelector('.enemy-card')).toBeInTheDocument();
     expect(document.querySelector('.combat-box')).toBeInTheDocument();
@@ -371,6 +419,7 @@ describe('App - Screen Flows & Interactive UI', () => {
       0.1, // Dire Rat
       dieToFloat(1, 3), // Flee with 0 lamps -> 1 damage
       dieToFloat(6, 6), // Next encounter = 6 (chest)
+      dieToFloat(1, 6), // Not locked chest
       dieToFloat(3, 6), // 1 item: Hunting Spear
       dieToFloat(1, 6), // Leave chest -> Lamp screen
     ]);
@@ -386,7 +435,7 @@ describe('App - Screen Flows & Interactive UI', () => {
     expect(screen.getByText('FLED COMBAT')).toBeInTheDocument();
 
     await user.keyboard(' ');
-    expect(screen.getByText('WOODLAND CHEST')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 2, name: 'CHEST' })).toBeInTheDocument();
     expect(document.querySelector('.enemy-card')).toBeInTheDocument();
     expect(document.querySelector('.combat-box')).toBeInTheDocument();
     expect(
@@ -394,10 +443,9 @@ describe('App - Screen Flows & Interactive UI', () => {
         'An ancient ironbound coffer rests among the twisted roots.'
       )
     ).toBeInTheDocument();
-    expect(screen.getByText('Hunting Spear')).toBeInTheDocument();
 
     await user.click(screen.getByRole('button', { name: /LEAVE CHEST/i }));
-    expect(screen.getByText('YOU FIND AN UNLIT LAMP')).toBeInTheDocument();
+    expect(screen.getByText('UNLIT LAMP')).toBeInTheDocument();
   });
 
   it('allows F hotkey to flee combat even when a button has focus', async () => {
@@ -428,8 +476,8 @@ describe('App - Screen Flows & Interactive UI', () => {
 
     render(<App initialState={pauseState} rng={() => dieToFloat(1, 6)} />);
 
-    expect(screen.getByText('THE TRAIL')).toBeInTheDocument();
-    expect(screen.getByText('A MOMENT OF RESPITE')).toBeInTheDocument();
+    expect(document.querySelector('.status-header__title')).toHaveTextContent('The Dark Wood');
+    expect(screen.getByRole('heading', { level: 2, name: 'RESPITE' })).toBeInTheDocument();
     expect(document.querySelector('.enemy-card')).toBeInTheDocument();
     expect(document.querySelector('.combat-box')).toBeInTheDocument();
     expect(
@@ -444,7 +492,7 @@ describe('App - Screen Flows & Interactive UI', () => {
     expect(proceedBtn).toBeInTheDocument();
 
     await user.click(proceedBtn);
-    expect(screen.getByText('YOU FIND AN UNLIT LAMP')).toBeInTheDocument();
+    expect(screen.getByText('UNLIT LAMP')).toBeInTheDocument();
   });
 
   it('maintains a fixed, identical game-card height across all screens and combat phases', () => {
@@ -503,9 +551,8 @@ describe('App - Screen Flows & Interactive UI', () => {
       const { unmount } = render(<App initialState={st} />);
       const card = screen.getByTestId('game-card');
       const styles = window.getComputedStyle(card);
-      expect(styles.height).toBe('560px');
-      expect(styles.minHeight).toBe('560px');
-      expect(styles.maxHeight).toBe('560px');
+      expect(styles.height).not.toBe('560px');
+      expect(styles.maxHeight).toBe('none');
       unmount();
     }
   });
@@ -542,13 +589,14 @@ describe('App - Screen Flows & Interactive UI', () => {
     }
 
     const rootStyles = window.getComputedStyle(document.documentElement);
+    expect(rootStyles.getPropertyValue('--min-box-height').trim()).toBe('350px');
     expect(rootStyles.getPropertyValue('--lime-primary').trim()).toBe('');
     expect(rootStyles.getPropertyValue('--lime-olive').trim()).toBe('');
     expect(rootStyles.getPropertyValue('--bg-recessed').trim()).not.toBe('#1a2e05');
     expect(rootStyles.getPropertyValue('--bg-hover-dark').trim()).not.toBe('#263815');
   });
 
-  it('defines a < 768px responsive rule setting game-card to 80vh without cropping text', () => {
+  it('defines a < 768px responsive rule for game-card and dark-wood-viewport without fixed height containers', () => {
     render(<App />);
     const styleSheets = Array.from(document.styleSheets);
     const mediaRules: CSSMediaRule[] = [];
@@ -562,8 +610,109 @@ describe('App - Screen Flows & Interactive UI', () => {
     expect(mediaRules.length).toBeGreaterThan(0);
     const cssText = mediaRules.map((r) => r.cssText).join(' ');
     expect(cssText).toContain('.game-card');
-    expect(cssText).toMatch(/height:\s*80vh/);
-    expect(cssText).toMatch(/overflow-y:\s*auto/);
+    expect(cssText).toContain('.dark-wood-viewport');
+    expect(cssText).toContain('.inventory-item-card');
+    expect(cssText).toContain('.inventory-item-actions');
+  });
+
+  it('flags weighed down warning when pack contains > 3 items', () => {
+    const weighedState: GameState = {
+      ...createInitialState(),
+      screen: 'enemy',
+      inventory: [
+        { name: 'Bandage 1', type: 'potion', heal: 2, desc: '' },
+        { name: 'Bandage 2', type: 'potion', heal: 2, desc: '' },
+        { name: 'Bandage 3', type: 'potion', heal: 2, desc: '' },
+        { name: 'Dagger', type: 'weapon', desc: '' },
+      ],
+      combat: {
+        ...enterDarkWood(createInitialState(), () => 0.1).combat!,
+        phase: 'encounter',
+      },
+    };
+
+    render(<App initialState={weighedState} />);
+    expect(screen.getByTestId('weighed-down-box')).toHaveTextContent(
+      /Carrying 5 items \(limit: 3\)\. Foes hit \+2 easier and your hits require \+2 more! Discard some items below\./i
+    );
+    expect(screen.getByTestId('combat-weighed-down-note')).toHaveTextContent(
+      /WEIGHED DOWN \(\+2\).*Discard some items below\./i
+    );
+  });
+
+  it('handles item discard with confirmation modal', async () => {
+    const user = userEvent.setup();
+    const stateWithItem: GameState = {
+      ...createInitialState(),
+      screen: 'rest',
+      inventory: [{ name: 'Rusty Axe', type: 'weapon', desc: 'Rusty axe.' }],
+    };
+
+    render(<App initialState={stateWithItem} />);
+    expect(screen.getByText('Rusty Axe')).toBeInTheDocument();
+
+    // Click discard button on item
+    await user.click(screen.getByTestId('inventory-discard-0'));
+    expect(screen.getByTestId('discard-modal')).toBeInTheDocument();
+    expect(screen.getByText(/Are you sure you want to discard/i)).toBeInTheDocument();
+
+    // Cancel discard via button
+    await user.click(screen.getByTestId('cancel-discard-btn'));
+    expect(screen.queryByTestId('discard-modal')).not.toBeInTheDocument();
+    expect(screen.getByText('Rusty Axe')).toBeInTheDocument();
+
+    // Open modal again and cancel via Escape key
+    await user.click(screen.getByTestId('inventory-discard-0'));
+    expect(screen.getByTestId('discard-modal')).toBeInTheDocument();
+    await user.keyboard('{Escape}');
+    expect(screen.queryByTestId('discard-modal')).not.toBeInTheDocument();
+    expect(screen.getByText('Rusty Axe')).toBeInTheDocument();
+
+    // Open modal again and confirm discard
+    await user.click(screen.getByTestId('inventory-discard-0'));
+    await user.click(screen.getByTestId('confirm-discard-btn'));
+    expect(screen.queryByTestId('discard-modal')).not.toBeInTheDocument();
+    expect(screen.getByText('Pack is empty.')).toBeInTheDocument();
+  });
+
+  it('handles locked chest mechanics: requires 5+ roll, shows damage on failure, opens on 5+', async () => {
+    const user = userEvent.setup();
+    // 1st attempt: roll 2 (fails, 1 trap dmg)
+    // 2nd attempt: roll 6 (success, opens!)
+    const rng = createSequenceRng([dieToFloat(2, 6), dieToFloat(6, 6)]);
+
+    const lockedState: GameState = {
+      ...createInitialState(),
+      screen: 'chest',
+      hp: 10,
+      chest: {
+        items: [{ name: 'Mithril Chainmail', type: 'armor', armor: { name: 'Mithril Chainmail', defense: 1, desc: 'Armor' }, desc: 'Armor' }],
+        selectedIndex: 0,
+        message: 'A heavy ironbound coffer with a sturdy lock rests among the roots.',
+        isLocked: true,
+        opened: false,
+      },
+    };
+
+    render(<App initialState={lockedState} rng={rng} />);
+    expect(screen.getByText('LOCKED CHEST')).toBeInTheDocument();
+
+    // 1st attempt
+    await user.click(screen.getByRole('button', { name: /OPEN CHEST/i }));
+    expect(screen.getByText(/Rolled a 2 \(needed 5\+\)\. A needle trap inflicts 1 damage!/i)).toBeInTheDocument();
+    expect(screen.getByText(/HP: 9\/13/i)).toBeInTheDocument();
+
+    // 2nd attempt: roll 6 -> success!
+    await user.click(screen.getByRole('button', { name: /TRY AGAIN/i }));
+    expect(screen.getByText('Mithril Chainmail')).toBeInTheDocument();
+
+    // Take item into inventory
+    await user.click(screen.getByRole('button', { name: /^TAKE$/i }));
+    expect(screen.getByTestId('inventory-section')).toHaveTextContent('Mithril Chainmail');
+
+    // Equip armor from inventory
+    await user.click(screen.getByTestId('inventory-use-0'));
+    expect(screen.getByText(/Mithril Chainmail \(-1 DMG\)/i)).toBeInTheDocument();
   });
 
   it('renders version link and GitHub repo link outside game wrapper, opening changelog modal on click and closing on CLOSE/Escape', async () => {

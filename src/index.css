@@ -9,6 +9,7 @@
   --lime-muted: #4d7c0f;
   --font-header: 'Press Start 2P', 'Courier New', monospace;
   --font-body: 'VT323', 'Courier New', monospace;
+  --min-box-height: 350px;
 
   color-scheme: dark;
   background-color: var(--bg-viewport);
@@ -34,9 +35,7 @@ body,
 #root {
   margin: 0;
   padding: 0;
-  height: 100vh;
-  max-height: 100vh;
-  overflow: hidden;
+  min-height: 100vh;
   background-color: var(--bg-viewport);
   color: var(--lime-bright);
 }

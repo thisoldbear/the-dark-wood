@@ -7,7 +7,7 @@ import type {
   Rng,
 } from './types';
 
-export const APP_VERSION = '0.3.4';
+export const APP_VERSION = '0.4.0';
 
 export const STARTING_WEAPON: Weapon = {
   name: 'Rusty Dagger',
@@ -60,6 +60,7 @@ export const LOOT_TABLE: Item[] = [
     name: 'Elixir of Life',
     type: 'potion',
     heal: 3,
+    instant: true,
     desc: 'Restores +3 HP.',
   },
   {
@@ -110,7 +111,67 @@ export const LOOT_TABLE: Item[] = [
     name: 'Double Draught',
     type: 'double_potion',
     heal: 6,
+    instant: true,
     desc: 'Potent tonic! Restores +6 HP.',
+  },
+];
+
+export const LOCKED_CHEST_LOOT_TABLE: Item[] = [
+  {
+    name: 'Full Restoration Potion',
+    type: 'potion',
+    heal: 99,
+    instant: true,
+    desc: 'Restores all HP to full.',
+  },
+  {
+    name: 'Dragonfang Blade',
+    type: 'weapon',
+    weapon: {
+      name: 'Dragonfang Blade',
+      skill: 3,
+      damage: 6,
+      desc: 'Forged from ancient wyrm-bone.',
+    },
+    desc: 'Forged from ancient wyrm-bone.',
+  },
+  {
+    name: 'Mithril Chainmail',
+    type: 'armor',
+    armor: {
+      name: 'Mithril Chainmail',
+      defense: 1,
+      desc: 'Absorbs 1 damage per hit.',
+    },
+    desc: 'Absorbs 1 damage per hit.',
+  },
+  {
+    name: 'Vorpal Cleaver',
+    type: 'weapon',
+    weapon: {
+      name: 'Vorpal Cleaver',
+      skill: 2,
+      damage: 4,
+      desc: 'Deadly sharpness strikes on 2+.',
+    },
+    desc: 'Deadly sharpness strikes on 2+.',
+  },
+  {
+    name: 'Phoenix Draught',
+    type: 'potion',
+    heal: 10,
+    instant: true,
+    desc: 'Fiery essence restores +10 HP.',
+  },
+  {
+    name: 'Runed Aegis',
+    type: 'armor',
+    armor: {
+      name: 'Runed Aegis',
+      defense: 1,
+      desc: 'Warded crest absorbs 1 damage per hit.',
+    },
+    desc: 'Absorbs 1 damage per hit.',
   },
 ];
 
@@ -124,6 +185,24 @@ export function rollD3(rng: Rng = Math.random): number {
 
 export function calculateDamage(weaponDamage: number, targetToughness: number): number {
   return Math.max(1, weaponDamage - Math.floor(targetToughness / 2));
+}
+
+export const CARRY_CAPACITY = 3;
+
+export function getCarriedItemCount(state: GameState): number {
+  const weaponCount = state.weapon ? 1 : 0;
+  const armorCount = state.armor ? 1 : 0;
+  const packCount = state.inventory?.length ?? 0;
+  return weaponCount + armorCount + packCount;
+}
+
+export function getWeighedDownPenalty(state: GameState | Item[]): number {
+  const count = Array.isArray(state) ? state.length + 1 : getCarriedItemCount(state);
+  return Math.max(0, count - CARRY_CAPACITY);
+}
+
+export function isWeighedDown(state: GameState | Item[]): boolean {
+  return getWeighedDownPenalty(state) > 0;
 }
 
 export function createEnemy(type: EnemyType): Enemy {
@@ -148,6 +227,17 @@ export function rollLootItem(rng: Rng = Math.random): Item {
   return {
     ...item,
     weapon: item.weapon ? { ...item.weapon } : undefined,
+    armor: item.armor ? { ...item.armor } : undefined,
+  };
+}
+
+export function rollLockedChestItem(rng: Rng = Math.random): Item {
+  const roll = rollD6(rng);
+  const item = LOCKED_CHEST_LOOT_TABLE[roll - 1];
+  return {
+    ...item,
+    weapon: item.weapon ? { ...item.weapon } : undefined,
+    armor: item.armor ? { ...item.armor } : undefined,
   };
 }
 
@@ -183,7 +273,8 @@ export function rollPauseMessage(rng: Rng = Math.random): string {
 }
 
 export function rollChestItems(rng: Rng = Math.random): Item[] {
-  return [rollLootItem(rng)];
+  const count = rollD3(rng);
+  return Array.from({ length: count }, () => rollLootItem(rng));
 }
 
 export function createInitialState(): GameState {
@@ -193,6 +284,7 @@ export function createInitialState(): GameState {
     maxHp: 13,
     lamps: 0,
     weapon: { ...STARTING_WEAPON },
+    inventory: [],
     stepsSincePause: 0,
   };
 }
@@ -250,6 +342,26 @@ export function startNextEncounter(state: GameState, rng: Rng = Math.random): Ga
       },
     };
   }
+
+  const isLocked = rollD6(rng) === 6;
+  if (isLocked) {
+    const items = [rollLockedChestItem(rng)];
+    return {
+      ...state,
+      screen: 'chest',
+      combat: undefined,
+      pauseMessage: undefined,
+      stepsSincePause: steps,
+      chest: {
+        items,
+        selectedIndex: 0,
+        message: 'A heavy ironbound coffer with a sturdy lock rests among the roots. A roll of 5+ on a D6 is required to open it.',
+        isLocked: true,
+        opened: false,
+      },
+    };
+  }
+
   const items = rollChestItems(rng);
   return {
     ...state,
@@ -261,6 +373,68 @@ export function startNextEncounter(state: GameState, rng: Rng = Math.random): Ga
       items,
       selectedIndex: 0,
       message: 'An ancient ironbound coffer rests among the twisted roots.',
+      isLocked: false,
+      opened: false,
+    },
+  };
+}
+
+export function openChest(state: GameState): GameState {
+  const chest = state.chest;
+  if (!chest) return state;
+  if (chest.isLocked) return state;
+  return {
+    ...state,
+    chest: {
+      ...chest,
+      opened: true,
+      message: 'The coffer is opened.',
+    },
+  };
+}
+
+export function unlockChest(state: GameState, rng: Rng = Math.random): GameState {
+  const chest = state.chest;
+  if (!chest || !chest.isLocked) return state;
+
+  const roll = rollD6(rng);
+  if (roll >= 5) {
+    return {
+      ...state,
+      chest: {
+        ...chest,
+        opened: true,
+        unlockFailed: false,
+        lastUnlockRoll: roll,
+        message: `Rolled a ${roll} (needed 5+). The lock clicks open!`,
+      },
+    };
+  }
+
+  const newHp = Math.max(0, state.hp - 1);
+  if (newHp <= 0) {
+    return {
+      ...state,
+      hp: 0,
+      screen: 'game_over',
+      deathCause: 'Killed by a needle trap while picking a locked chest',
+      chest: {
+        ...chest,
+        unlockFailed: true,
+        lastUnlockRoll: roll,
+        message: `Rolled a ${roll} (needed 5+). A poison needle trap triggers!`,
+      },
+    };
+  }
+
+  return {
+    ...state,
+    hp: newHp,
+    chest: {
+      ...chest,
+      unlockFailed: true,
+      lastUnlockRoll: roll,
+      message: `Rolled a ${roll} (needed 5+). A needle trap inflicts 1 damage!`,
     },
   };
 }
@@ -303,8 +477,13 @@ function resolveEnemyAttack(
 
   const { enemy } = combat;
   const roll = rollD6(rng);
-  const hit = roll >= enemy.skill;
-  const dmg = hit ? calculateDamage(enemy.damage, 1) : 0;
+  const penalty = getWeighedDownPenalty(state);
+  const neededSkill = Math.max(1, enemy.skill - penalty);
+  const hit = roll >= neededSkill;
+  let dmg = hit ? calculateDamage(enemy.damage, 1) : 0;
+  if (hit && state.armor) {
+    dmg = Math.max(1, dmg - state.armor.defense);
+  }
   const newHp = Math.max(0, state.hp - dmg);
 
   if (newHp <= 0) {
@@ -318,14 +497,14 @@ function resolveEnemyAttack(
         lastEnemyRoll: roll,
         enemyHit: hit,
         enemyDamageDealt: dmg,
-        logMessage: `${prefixLog}${enemy.name} rolled ${roll} (needs ${enemy.skill}+) and dealt ${dmg} damage!`,
+        logMessage: `${prefixLog}${enemy.name} rolled ${roll} (needs ${neededSkill}+) and dealt ${dmg} damage!`,
       },
     };
   }
 
   const attackMsg = hit
-    ? `${enemy.name} hits for ${dmg} damage! (Rolled ${roll} vs ${enemy.skill}+)`
-    : `${enemy.name} missed! (Rolled ${roll} vs ${enemy.skill}+)`;
+    ? `${enemy.name} hits for ${dmg} damage! (Rolled ${roll} vs ${neededSkill}+)`
+    : `${enemy.name} missed! (Rolled ${roll} vs ${neededSkill}+)`;
 
   return {
     ...state,
@@ -443,7 +622,9 @@ export function playerStrike(state: GameState, rng: Rng = Math.random): GameStat
 
   const { enemy } = combat;
   const roll = rollD6(rng);
-  const hit = roll >= state.weapon.skill;
+  const penalty = getWeighedDownPenalty(state);
+  const neededSkill = state.weapon.skill + penalty;
+  const hit = roll >= neededSkill;
 
   if (!hit) {
     return {
@@ -454,7 +635,7 @@ export function playerStrike(state: GameState, rng: Rng = Math.random): GameStat
         lastPlayerRoll: roll,
         playerHit: false,
         playerDamageDealt: 0,
-        logMessage: `Your ${state.weapon.name} missed! (Rolled ${roll}, needed ${state.weapon.skill}+)`,
+        logMessage: `Your ${state.weapon.name} missed! (Rolled ${roll}, needed ${neededSkill}+)`,
       },
     };
   }
@@ -494,7 +675,7 @@ export function playerStrike(state: GameState, rng: Rng = Math.random): GameStat
       lastPlayerRoll: roll,
       playerHit: true,
       playerDamageDealt: dmg,
-      logMessage: `Hit ${enemy.name} for ${dmg} damage! (Rolled ${roll} vs ${state.weapon.skill}+)`,
+      logMessage: `Hit ${enemy.name} for ${dmg} damage! (Rolled ${roll} vs ${neededSkill}+)`,
     },
   };
 }
@@ -526,8 +707,7 @@ export function proceedFromCombat(state: GameState, rng: Rng = Math.random): Gam
 
 export function takeChestItem(
   state: GameState,
-  index?: number,
-  rng: Rng = Math.random
+  index?: number
 ): GameState {
   const chest = state.chest;
   if (!chest || chest.items.length === 0) return state;
@@ -536,41 +716,116 @@ export function takeChestItem(
   const item = chest.items[targetIndex];
   if (!item) return state;
 
-  let newHp = state.hp;
-  let newWeapon = state.weapon;
-  let statusMsg = '';
-
-  if (item.type === 'potion' || item.type === 'double_potion') {
-    const heal = item.heal ?? 3;
-    newHp = Math.min(state.maxHp, state.hp + heal);
-    statusMsg = `Drank ${item.name}! (+${heal} HP)`;
-  } else if (item.type === 'weapon' && item.weapon) {
-    newWeapon = { ...item.weapon };
-    statusMsg = `Equipped ${item.weapon.name}!`;
-  }
-
   const remainingItems = chest.items.filter((_, idx) => idx !== targetIndex);
+  const newInventory = [...(state.inventory ?? []), { ...item }];
 
-  const updatedState: GameState = {
+  return {
     ...state,
-    hp: newHp,
-    weapon: newWeapon,
+    inventory: newInventory,
     chest: {
+      ...chest,
       items: remainingItems,
       selectedIndex: 0,
-      message: statusMsg,
+      message: `Stowed ${item.name} in pack.`,
     },
   };
-
-  if (remainingItems.length === 0) {
-    return startNextEncounter(updatedState, rng);
-  }
-
-  return updatedState;
 }
 
-export function leaveChest(state: GameState, rng: Rng = Math.random): GameState {
+export function takeAllChestItems(state: GameState): GameState {
+  const chest = state.chest;
+  if (!chest || chest.items.length === 0) return state;
+
+  const newInventory = [
+    ...(state.inventory ?? []),
+    ...chest.items.map((item) => ({ ...item })),
+  ];
+
+  return {
+    ...state,
+    inventory: newInventory,
+    chest: {
+      ...chest,
+      items: [],
+      selectedIndex: 0,
+      message: 'All items stowed in pack.',
+    },
+  };
+}
+
+export function closeChest(state: GameState, rng: Rng = Math.random): GameState {
   return startNextEncounter(state, rng);
+}
+
+export const leaveChest = closeChest;
+
+export function applyInventoryItem(state: GameState, index: number): GameState {
+  const inv = state.inventory ?? [];
+  if (index < 0 || index >= inv.length) return state;
+
+  const item = inv[index];
+
+  // 1. Weapon equip: swap with current weapon
+  if (item.type === 'weapon' && item.weapon) {
+    const currentWeapon = state.weapon;
+    const newWeapon = { ...item.weapon };
+    const newInv = [...inv];
+    newInv[index] = {
+      name: currentWeapon.name,
+      type: 'weapon',
+      weapon: { ...currentWeapon },
+      desc: currentWeapon.desc,
+    };
+    return {
+      ...state,
+      weapon: newWeapon,
+      inventory: newInv,
+    };
+  }
+
+  // 2. Armor equip: swap if already equipped, or equip and remove from inventory
+  if (item.type === 'armor' && item.armor) {
+    const currentArmor = state.armor;
+    const newArmor = { ...item.armor };
+    const newInv = [...inv];
+    if (currentArmor) {
+      newInv[index] = {
+        name: currentArmor.name,
+        type: 'armor',
+        armor: { ...currentArmor },
+        desc: currentArmor.desc,
+      };
+    } else {
+      newInv.splice(index, 1);
+    }
+    return {
+      ...state,
+      armor: newArmor,
+      inventory: newInv,
+    };
+  }
+
+  // 3. Instant potion consumable
+  if (item.instant || item.type === 'potion' || item.type === 'double_potion') {
+    const heal = item.heal ?? 3;
+    const newHp = Math.min(state.maxHp, state.hp + heal);
+    const newInv = inv.filter((_, idx) => idx !== index);
+    return {
+      ...state,
+      hp: newHp,
+      inventory: newInv,
+    };
+  }
+
+  return state;
+}
+
+export function discardInventoryItem(state: GameState, index: number): GameState {
+  const inv = state.inventory ?? [];
+  if (index < 0 || index >= inv.length) return state;
+  return {
+    ...state,
+    inventory: inv.filter((_, idx) => idx !== index),
+  };
 }
 
 export function restartGame(): GameState {
