@@ -33,16 +33,6 @@ interface AppProps {
   rng?: Rng;
 }
 
-const TITLES: Record<string, string> = {
-  enemy: 'COMBAT',
-  lamp: 'SACRED LAMP',
-  rest: 'SANCTUARY',
-  pause: 'THE TRAIL',
-  chest: 'CHEST',
-  victory: 'VICTORY',
-  game_over: 'GAME OVER',
-};
-
 export function App({ initialState, rng = Math.random }: AppProps) {
   const [state, setState] = useState<GameState>(
     () => initialState ?? createInitialState()
@@ -148,9 +138,7 @@ export function App({ initialState, rng = Math.random }: AppProps) {
         {state.screen !== 'title' && (
           <header className="status-header" data-testid="status-header">
             <div className="status-header__left">
-              <span className="status-header__title">
-                {TITLES[state.screen] ?? 'THE DARK WOOD'}
-              </span>
+              <span className="status-header__title">The Dark Wood</span>
             </div>
             <div className="status-header__right">
               <span className="status-stat">

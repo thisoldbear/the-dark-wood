@@ -40,7 +40,7 @@ describe('App - Screen Flows & Interactive UI', () => {
 
     await user.click(screen.getByRole('button', { name: /ENTER/i }));
 
-    expect(screen.getByText('COMBAT')).toBeInTheDocument();
+    expect(document.querySelector('.status-header__title')).toHaveTextContent('The Dark Wood');
     expect(screen.getByText(/HP: 13\/13/i)).toBeInTheDocument();
     expect(screen.getByText(/L: 0\/10/i)).toBeInTheDocument();
     expect(screen.getByText('Dire Rat')).toBeInTheDocument();
@@ -204,7 +204,7 @@ describe('App - Screen Flows & Interactive UI', () => {
     await user.click(screen.getByRole('button', { name: /LIGHT THE LAMP/i }));
 
     // Sanctuary / Rest screen
-    expect(screen.getByText('SANCTUARY')).toBeInTheDocument();
+    expect(document.querySelector('.status-header__title')).toHaveTextContent('The Dark Wood');
     expect(screen.getByText('LIT LAMP')).toBeInTheDocument();
     expect(document.querySelector('.enemy-card')).toBeInTheDocument();
     expect(document.querySelector('.combat-box')).toBeInTheDocument();
@@ -400,7 +400,7 @@ describe('App - Screen Flows & Interactive UI', () => {
     render(<App initialState={doomedState} rng={rng} />);
     await user.click(screen.getByRole('button', { name: /FIGHT/i }));
 
-    expect(screen.getByText('GAME OVER')).toBeInTheDocument();
+    expect(document.querySelector('.status-header__title')).toHaveTextContent('The Dark Wood');
     expect(screen.getByText('YOU HAVE FALLEN')).toBeInTheDocument();
     expect(document.querySelector('.enemy-card')).toBeInTheDocument();
     expect(document.querySelector('.combat-box')).toBeInTheDocument();
@@ -476,7 +476,7 @@ describe('App - Screen Flows & Interactive UI', () => {
 
     render(<App initialState={pauseState} rng={() => dieToFloat(1, 6)} />);
 
-    expect(screen.getByText('THE TRAIL')).toBeInTheDocument();
+    expect(document.querySelector('.status-header__title')).toHaveTextContent('The Dark Wood');
     expect(screen.getByRole('heading', { level: 2, name: 'RESPITE' })).toBeInTheDocument();
     expect(document.querySelector('.enemy-card')).toBeInTheDocument();
     expect(document.querySelector('.combat-box')).toBeInTheDocument();
