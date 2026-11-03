@@ -502,7 +502,7 @@
 .pixel-btn {
   flex: 1;
   min-width: 140px;
-  max-width: 260px;
+  max-width: 100%;
   font-family: var(--font-header);
   font-size: 0.6rem;
   letter-spacing: 0.08em;
